@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "lockspot",
+    "name": "Lockspot",
     "slug": "lockspot",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -32,11 +32,36 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      "expo-secure-store",
+      "expo-notifications",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Lockspot utilise la biométrie pour que toi seul puisses ouvrir tes coffres."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Lockspot vérifie ta position pour s'assurer que tu es bien à l'endroit où tu as posé ton coffre.",
+          "locationAlwaysAndWhenInUsePermission": "Lockspot utilise ta position en arrière-plan pour te prévenir quand tu arrives près d'un de tes coffres.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d09c6bc7-1fbb-40be-a0a7-c1fa8d052bc6"
+      }
+    },
+    "owner": "vadanero"
   }
 }
