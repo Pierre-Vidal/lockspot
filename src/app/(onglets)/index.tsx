@@ -8,6 +8,7 @@ import { BadgePosition } from '@/components/carte/BadgePosition';
 import { CarteCoffres } from '@/components/carte/CarteCoffres';
 import { FicheCoffre, type EtatZone } from '@/components/coffres/FicheCoffre';
 import { arrondis, couleurs, espacements, typographie } from '@/constants/theme';
+import { useAuth } from '@/hooks/use-auth';
 import { usePositionUtilisateur } from '@/hooks/usePositionUtilisateur';
 import { COFFRES_DE_TEST } from '@/mocks/coffres';
 import type { Coffre, Coordonnees } from '@/types/coffre';
@@ -19,9 +20,11 @@ function calculerEtatZone(coffre: Coffre, position: Coordonnees | null): EtatZon
 }
 
 export default function EcranCarte() {
+    const { user } = useAuth();
     const { statut, position } = usePositionUtilisateur();
     const [idCoffreSelectionne, setIdCoffreSelectionne] = useState<string | null>(null);
 
+    const salutation = user?.displayName ? `Bonjour ${user.displayName}` : 'Bonjour';
     const coffres = COFFRES_DE_TEST;
     const coffreSelectionne = coffres.find((coffre) => coffre.id === idCoffreSelectionne) ?? null;
 
@@ -29,7 +32,7 @@ export default function EcranCarte() {
         <SafeAreaView edges={['top']} style={styles.ecran}>
             <View style={styles.entete}>
                 <View>
-                    <Text style={styles.surtitre}>BONJOUR</Text>
+                    <Text style={styles.surtitre}>{salutation.toUpperCase()}</Text>
                     <Text style={styles.titre}>Vos coffres</Text>
                 </View>
                 <BadgePosition statut={statut} />

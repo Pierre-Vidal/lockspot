@@ -7,7 +7,7 @@ import Logo from '@/assets/images/logo.svg';
 import { AuthBackground } from '@/components/auth/auth-background';
 import { LoginForm } from '@/components/auth/login-form';
 import { SignupForm } from '@/components/auth/signup-form';
-import { Brand } from '@/constants/brand';
+import { couleurs, polices } from '@/constants/theme';
 
 type Tab = 'login' | 'signup';
 
@@ -66,7 +66,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Brand.colors.background,
+    backgroundColor: couleurs.fond,
   },
   flex: {
     flex: 1,
@@ -78,20 +78,20 @@ const styles = StyleSheet.create({
   eyebrow: {
     marginTop: 20,
     marginBottom: 8,
-    fontFamily: Brand.fonts.bold,
+    fontFamily: polices.gras,
     fontSize: 10,
     letterSpacing: 1.4,
     textTransform: 'uppercase',
-    color: Brand.colors.actionDark,
+    color: couleurs.principaleFoncee,
   },
   title: {
     maxWidth: 330,
     marginBottom: 26,
-    fontFamily: Brand.fonts.heading,
+    fontFamily: polices.titre,
     fontSize: 27,
     lineHeight: 31,
     letterSpacing: -0.95,
-    color: Brand.colors.ink,
+    color: couleurs.texte,
   },
   tabs: {
     flexDirection: 'row',
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   tabActive: {
-    backgroundColor: Brand.colors.surface,
+    backgroundColor: couleurs.surface,
     shadowColor: '#23302c',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
@@ -118,11 +118,11 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   tabLabel: {
-    fontFamily: Brand.fonts.bold,
+    fontFamily: polices.gras,
     fontSize: 13,
-    color: Brand.colors.muted,
+    color: couleurs.texteSecondaire,
   },
   tabLabelActive: {
-    color: Brand.colors.ink,
+    color: couleurs.texte,
   },
 });

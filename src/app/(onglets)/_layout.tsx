@@ -5,7 +5,11 @@ import { BarreOnglets } from '@/components/navigation/BarreOnglets';
 
 export default function LayoutOnglets() {
     return (
-        <Tabs tabBar={(props) => <BarreOnglets {...props} />} screenOptions={{ headerShown: false }}>
+        // La carte (index) s'ouvre en premier, même si l'onglet Compte est déclaré avant elle.
+        <Tabs
+            initialRouteName="index"
+            tabBar={(props) => <BarreOnglets {...props} />}
+            screenOptions={{ headerShown: false }}>
             <Tabs.Screen
                 name="compte"
                 options={{

@@ -4,7 +4,7 @@ import { Alert, Pressable, StyleSheet, Text, View, type TextInput } from 'react-
 import { ErrorBanner } from '@/components/auth/error-banner';
 import { PrimaryButton } from '@/components/auth/primary-button';
 import { TextField } from '@/components/auth/text-field';
-import { Brand } from '@/constants/brand';
+import { couleurs, polices } from '@/constants/theme';
 import { useAuth } from '@/hooks/use-auth';
 import { describeAuthError } from '@/services/auth-errors';
 import { isValidEmail } from '@/utils/validation';
@@ -130,8 +130,8 @@ const styles = StyleSheet.create({
     marginTop: -5,
   },
   forgotLabel: {
-    fontFamily: Brand.fonts.bold,
+    fontFamily: polices.gras,
     fontSize: 12,
-    color: Brand.colors.actionDark,
+    color: couleurs.principaleFoncee,
   },
 });

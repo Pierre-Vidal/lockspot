@@ -1,6 +1,6 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
 
-import { Brand } from '@/constants/brand';
+import { arrondis, couleurs, polices } from '@/constants/theme';
 
 type PrimaryButtonProps = {
   label: string;
@@ -32,13 +32,13 @@ const styles = StyleSheet.create({
   button: {
     minHeight: 54,
     paddingHorizontal: 20,
-    borderRadius: Brand.radius.sm,
-    backgroundColor: Brand.colors.action,
+    borderRadius: arrondis.md,
+    backgroundColor: couleurs.principale,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    shadowColor: Brand.colors.action,
+    shadowColor: couleurs.principale,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.24,
     shadowRadius: 20,
@@ -51,12 +51,12 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   label: {
-    fontFamily: Brand.fonts.bold,
+    fontFamily: polices.gras,
     fontSize: 16,
     color: '#ffffff',
   },
   arrow: {
-    fontFamily: Brand.fonts.bold,
+    fontFamily: polices.gras,
     fontSize: 20,
     lineHeight: 22,
     color: '#ffffff',

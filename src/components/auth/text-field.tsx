@@ -2,7 +2,7 @@ import { useState, type Ref } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
 
 import { Icon } from '@/components/icons';
-import { Brand } from '@/constants/brand';
+import { arrondis, couleurs, polices } from '@/constants/theme';
 
 type TextFieldProps = Omit<TextInputProps, 'style'> & {
   label: string;
@@ -31,8 +31,8 @@ export function TextField({
         <TextInput
           ref={ref}
           style={styles.input}
-          placeholderTextColor={Brand.colors.placeholder}
-          selectionColor={Brand.colors.action}
+          placeholderTextColor={couleurs.texteDiscret}
+          selectionColor={couleurs.principale}
           accessibilityLabel={label}
           secureTextEntry={hidden}
           onFocus={(event) => {
@@ -52,7 +52,7 @@ export function TextField({
             accessibilityRole="button"
             accessibilityLabel={revealed ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
             style={styles.toggle}>
-            <Icon name={revealed ? 'eyeOff' : 'eye'} color={Brand.colors.muted} />
+            <Icon name={revealed ? 'eyeOff' : 'eye'} color={couleurs.texteSecondaire} />
           </Pressable>
         )}
       </View>
@@ -66,45 +66,45 @@ const styles = StyleSheet.create({
     gap: 7,
   },
   label: {
-    fontFamily: Brand.fonts.bold,
+    fontFamily: polices.gras,
     fontSize: 12,
-    color: Brand.colors.ink,
+    color: couleurs.texte,
     paddingLeft: 2,
   },
   field: {
     minHeight: 53,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: Brand.radius.sm,
+    borderRadius: arrondis.md,
     borderWidth: 1,
-    borderColor: Brand.colors.line,
+    borderColor: couleurs.bordure,
     backgroundColor: 'rgba(255, 253, 249, 0.9)',
     overflow: 'hidden',
   },
   fieldFocused: {
-    borderColor: Brand.colors.action,
-    backgroundColor: Brand.colors.surface,
+    borderColor: couleurs.principale,
+    backgroundColor: couleurs.surface,
   },
   fieldError: {
-    borderColor: Brand.colors.danger,
+    borderColor: couleurs.erreur,
   },
   input: {
     flex: 1,
     minWidth: 0,
     height: 51,
     paddingHorizontal: 15,
-    fontFamily: Brand.fonts.regular,
+    fontFamily: polices.corps,
     fontSize: 14,
-    color: Brand.colors.ink,
+    color: couleurs.texte,
   },
   toggle: {
     padding: 8,
     marginRight: 5,
   },
   error: {
-    fontFamily: Brand.fonts.semibold,
+    fontFamily: polices.semiGras,
     fontSize: 11,
-    color: Brand.colors.danger,
+    color: couleurs.erreur,
     paddingLeft: 2,
   },
 });

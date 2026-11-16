@@ -11,11 +11,21 @@ export const couleurs = {
     attention: '#987035',
     bordure: '#E6E0D6',
     erreur: '#D64545',
+    erreurLegere: '#F9E5E4',
 } as const;
 
 export const espacements = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as const;
 
 export const arrondis = { sm: 8, md: 16, lg: 24, pilule: 999 } as const;
+
+/** Polices de la maquette, chargées avec useFonts dans src/app/_layout.tsx. */
+export const polices = {
+    corps: 'DMSans_400Regular',
+    moyen: 'DMSans_500Medium',
+    semiGras: 'DMSans_600SemiBold',
+    gras: 'DMSans_700Bold',
+    titre: 'Manrope_800ExtraBold',
+} as const;
 
 export const typographie = {
     surtitre: { fontSize: 12, fontWeight: '700', letterSpacing: 1.5 },
