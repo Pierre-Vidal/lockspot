@@ -15,6 +15,7 @@ const ETAT_INITIAL: EtatCoffres = { coffres: [], chargement: true, erreur: null 
 
 const cleCache = (uid: string) => `lockspot:coffres:${uid}`;
 
+// Le SDK Firebase JS ne garde rien sur le disque : on met en cache la dernière liste dans AsyncStroage pour l'affichage hors ligne
 export function useCoffres(): EtatCoffres {
     const { user } = useAuth();
     const uid = user?.uid ?? null;
@@ -24,6 +25,7 @@ export function useCoffres(): EtatCoffres {
         if (!uid) return;
 
         let actif = true;
+        // Si Firestore répond avant le cache, le cache ne l'écrase pas
         let recuDeFirestore = false;
 
         AsyncStorage.getItem(cleCache(uid))
@@ -31,7 +33,9 @@ export function useCoffres(): EtatCoffres {
                 if (!actif || recuDeFirestore || !texte) return;
                 setEtat({ coffres: JSON.parse(texte) as Coffre[], chargement: false, erreur: null });
             })
-            .catch(() => {});
+            .catch(() => {
+                // cache illisible
+            });
 
         const seDesabonner = ecouterCoffres(
             uid,

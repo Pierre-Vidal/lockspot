@@ -18,6 +18,7 @@ const COLLECTION_COFFRES = 'coffres';
 type DocumentCoffre = Omit<Coffre, 'id' | 'creeLe'> & { creeLe: Timestamp | null };
 
 function versCoffre(document: QueryDocumentSnapshot<DocumentData>): Coffre {
+    // estimates car le coffre n'a pas encore sa date serveur
     const donnees = document.data({ serverTimestamps: 'estimate' }) as DocumentCoffre;
     return {
         id: document.id,
@@ -34,6 +35,7 @@ export function ecouterCoffres(
     surChangement: (coffres: Coffre[]) => void,
     surErreur: (erreur: Error) => void,
 ): () => void {
+    // filtre pour refuser une requête pouvant renvoyer les coffres d'un autre utilisateur
     const requete = query(collection(db, COLLECTION_COFFRES), where('proprietaireId', '==', proprietaireId));
 
     return onSnapshot(

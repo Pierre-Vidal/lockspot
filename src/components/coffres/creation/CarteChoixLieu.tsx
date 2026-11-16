@@ -35,6 +35,7 @@ export function CarteChoixLieu({ lieu, onChoisirCoordonnees }: Props) {
             }}>
             <Camera
                 defaultSettings={{ centerCoordinate: CENTRE_FRANCE, zoomLevel: ZOOM_FRANCE }}
+                // Suivi de la géoloc de l'utilisateur tant qu'aucun lieu n'est choisi + vol quand il a été choisi
                 followUserLocation={!lieu}
                 followZoomLevel={ZOOM_POSITION}
                 centerCoordinate={lieu ? versPositionMapbox(lieu) : undefined}

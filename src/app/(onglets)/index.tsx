@@ -23,6 +23,7 @@ function calculerEtatZone(coffre: Coffre, position: Coordonnees | null): EtatZon
 export default function EcranCarte() {
     const { user } = useAuth();
     const { statut, position } = usePositionUtilisateur();
+    // On prend l'id et pas l'objet pour afficher la version à jour venant de Firestore
     const [idCoffreSelectionne, setIdCoffreSelectionne] = useState<string | null>(null);
 
     const salutation = user?.displayName ? `Bonjour ${user.displayName}` : 'Bonjour';

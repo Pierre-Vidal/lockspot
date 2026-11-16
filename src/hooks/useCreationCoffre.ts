@@ -47,7 +47,9 @@ export function useCreationCoffre() {
         let adresse: string | null = null;
         try {
             adresse = await adresseDepuisCoordonnees(coordonnees);
-        } catch {}
+        } catch {
+            // Pas de réseau ou erreur Mapbox : affichage des coordonnées à la place
+        }
 
         if (demande !== derniereDemande.current) return;
         setLieu({ coordonnees, adresse: adresse ?? coordonneesEnTexte(coordonnees) });
@@ -66,6 +68,8 @@ export function useCreationCoffre() {
         if (erreur || !lieu || !user) return false;
 
         setEnvoiEnCours(true);
+        // En ligne, on attend le serveur pour pouvoir afficher une erreur
+        // Hors ligne, Firestore envoie le coffre plus tard : inutile de bloquer l'écran
         try {
             const envoi = creerCoffre(
                 { nom, adresse: lieu.adresse ?? coordonneesEnTexte(lieu.coordonnees), coordonnees: lieu.coordonnees },

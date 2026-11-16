@@ -10,6 +10,7 @@ export default function EcranCompte() {
     return (
         <View style={styles.conteneur}>
             <Text style={styles.titre}>Compte</Text>
+            {/* Provisoire : en attendant la vraie page Compte. */}
             <Text style={styles.connecte}>Connecté : {user?.displayName ?? user?.email}</Text>
             <ActionsCompte />
         </View>

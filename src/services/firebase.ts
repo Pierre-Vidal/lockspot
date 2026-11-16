@@ -3,6 +3,8 @@ import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth, getReactNativePersistence, initializeAuth, type Auth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
+// Les variables EXPO_PUBLIC_* sont injectées dans le bundle au moment de la compilation.
+// Elles doivent être écrites en toutes lettres (pas de process.env[nom]).
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -22,8 +24,10 @@ const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
 function createAuth(): Auth {
   try {
+    // La session est conservée entre deux ouvertures de l'appli grâce à AsyncStorage.
     return initializeAuth(app, { persistence: getReactNativePersistence(AsyncStorage) });
   } catch {
+    // Après un rechargement à chaud, l'auth est déjà initialisée : on la récupère.
     return getAuth(app);
   }
 }

@@ -36,16 +36,12 @@ function jetonMapbox(): string {
     return jeton;
 }
 
-function versParametres(parametres: Record<string, string | undefined>): string {
-    return Object.entries(parametres)
-        .filter((entree): entree is [string, string] => entree[1] !== undefined)
-        .map(([cle, valeur]) => `${cle}=${encodeURIComponent(valeur)}`)
-        .join('&');
-}
-
 async function appelerMapbox(chemin: 'forward' | 'reverse', parametres: Record<string, string | undefined>, signal?: AbortSignal) {
-    const url = `${URL_API}/${chemin}?${versParametres({ ...parametres, language: LANGUE, country: PAYS, access_token: jetonMapbox() })}`;
-    const reponse = await fetch(url, { signal });
+    const requete = new URLSearchParams({ language: LANGUE, country: PAYS, access_token: jetonMapbox() });
+    for (const [cle, valeur] of Object.entries(parametres)) {
+        if (valeur !== undefined) requete.set(cle, valeur);
+    }
+    const reponse = await fetch(`${URL_API}/${chemin}?${requete.toString()}`, { signal });
     if (!reponse.ok) {
         throw new Error(`Géocodage Mapbox impossible (HTTP ${reponse.status}).`);
     }
