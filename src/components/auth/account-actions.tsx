@@ -1,6 +1,6 @@
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Brand } from '@/constants/brand';
+import { arrondis, couleurs, polices } from '@/constants/theme';
 import { useAuth } from '@/hooks/use-auth';
 import { describeAuthError } from '@/services/auth-errors';
 
@@ -8,7 +8,7 @@ import { describeAuthError } from '@/services/auth-errors';
  * Boutons provisoires pour tester l'authentification avant d'avoir l'écran Compte :
  * se déconnecter, et (en développement uniquement) supprimer le compte de test.
  */
-export function AccountActions() {
+export function ActionsCompte() {
   const { signOut, deleteAccount } = useAuth();
 
   function confirmDelete() {
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   button: {
     minHeight: 48,
     paddingHorizontal: 16,
-    borderRadius: Brand.radius.sm,
+    borderRadius: arrondis.md,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
@@ -69,21 +69,21 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.98 }],
   },
   signOut: {
-    backgroundColor: Brand.colors.action,
-    borderColor: Brand.colors.action,
+    backgroundColor: couleurs.principale,
+    borderColor: couleurs.principale,
   },
   signOutLabel: {
-    fontFamily: Brand.fonts.bold,
+    fontFamily: polices.gras,
     fontSize: 15,
     color: '#ffffff',
   },
   delete: {
-    backgroundColor: Brand.colors.dangerSoft,
+    backgroundColor: couleurs.erreurLegere,
     borderColor: 'rgba(190, 75, 80, 0.3)',
   },
   deleteLabel: {
-    fontFamily: Brand.fonts.bold,
+    fontFamily: polices.gras,
     fontSize: 14,
-    color: Brand.colors.danger,
+    color: couleurs.erreur,
   },
 });

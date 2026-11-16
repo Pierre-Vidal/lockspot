@@ -1,0 +1,1 @@
+export const RAYON_ZONE_METRES = 150;

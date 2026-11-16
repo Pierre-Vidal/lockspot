@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { Brand } from '@/constants/brand';
+import { arrondis, couleurs, polices } from '@/constants/theme';
 
 /** Message d'erreur général d'un formulaire (réseau, configuration, erreur inattendue…). */
 export function ErrorBanner({ message }: Readonly<{ message: string }>) {
@@ -15,15 +15,15 @@ const styles = StyleSheet.create({
   banner: {
     paddingHorizontal: 14,
     paddingVertical: 12,
-    borderRadius: Brand.radius.sm,
+    borderRadius: arrondis.md,
     borderWidth: 1,
     borderColor: 'rgba(190, 75, 80, 0.3)',
-    backgroundColor: Brand.colors.dangerSoft,
+    backgroundColor: couleurs.erreurLegere,
   },
   text: {
-    fontFamily: Brand.fonts.semibold,
+    fontFamily: polices.semiGras,
     fontSize: 12,
     lineHeight: 17,
-    color: Brand.colors.danger,
+    color: couleurs.erreur,
   },
 });
