@@ -5,53 +5,59 @@ import { DMSans_600SemiBold } from '@expo-google-fonts/dm-sans/600SemiBold';
 import { DMSans_700Bold } from '@expo-google-fonts/dm-sans/700Bold';
 import { Manrope_800ExtraBold } from '@expo-google-fonts/manrope/800ExtraBold';
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
+import { couleurs } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
+import { initialiserMapbox } from '@/services/mapbox';
 
+// Exécuté une seule fois, au chargement de l'app, avant le premier affichage.
+initialiserMapbox();
+
+// Le splash reste affiché tant que les polices et la session ne sont pas prêtes.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [fontsLoaded, fontError] = useFonts({
-    DMSans_400Regular,
-    DMSans_500Medium,
-    DMSans_600SemiBold,
-    DMSans_700Bold,
-    Manrope_800ExtraBold,
-  });
+export default function LayoutRacine() {
+    const [policesChargees, erreurPolices] = useFonts({
+        DMSans_400Regular,
+        DMSans_500Medium,
+        DMSans_600SemiBold,
+        DMSans_700Bold,
+        Manrope_800ExtraBold,
+    });
 
-  // On garde le splash tant que les polices ne sont pas prêtes.
-  if (!fontsLoaded && !fontError) return null;
+    if (!policesChargees && !erreurPolices) return null;
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AuthProvider>
-        <AnimatedSplashOverlay />
-        <AuthGate />
-      </AuthProvider>
-    </ThemeProvider>
-  );
+    return (
+        <AuthProvider>
+            <StatusBar style="dark" />
+            <GardeConnexion />
+        </AuthProvider>
+    );
 }
 
 /** Affiche l'appli si l'utilisateur est connecté, l'écran de connexion sinon. */
-function AuthGate() {
-  const { user, loading } = useAuth();
+function GardeConnexion() {
+    const { user, loading } = useAuth();
 
-  // Firebase restaure la session au démarrage : on n'affiche rien avant de savoir.
-  if (loading) return null;
+    useEffect(() => {
+        if (!loading) SplashScreen.hideAsync();
+    }, [loading]);
 
-  return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={Boolean(user)}>
-        <Stack.Screen name="(app)" />
-      </Stack.Protected>
-      <Stack.Protected guard={!user}>
-        <Stack.Screen name="login" />
-      </Stack.Protected>
-    </Stack>
-  );
+    // Firebase restaure la session au démarrage : on n'affiche rien avant de savoir.
+    if (loading) return null;
+
+    return (
+        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: couleurs.fond } }}>
+            <Stack.Protected guard={Boolean(user)}>
+                <Stack.Screen name="(onglets)" />
+            </Stack.Protected>
+            <Stack.Protected guard={!user}>
+                <Stack.Screen name="login" />
+            </Stack.Protected>
+        </Stack>
+    );
 }
