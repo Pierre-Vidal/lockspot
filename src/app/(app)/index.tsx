@@ -3,11 +3,13 @@ import { Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AnimatedIcon } from '@/components/animated-icon';
+import { AccountActions } from '@/components/auth/account-actions';
 import { HintRow } from '@/components/hint-row';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useAuth } from '@/hooks/use-auth';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
@@ -29,14 +31,21 @@ function getDevMenuHint() {
 }
 
 export default function HomeScreen() {
+  const { user } = useAuth();
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <ThemedView style={styles.heroSection}>
           <AnimatedIcon />
           <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
+            Bienvenue sur&nbsp;Lockspot
           </ThemedText>
+          {/* Provisoire : permet de tester la connexion avant d'avoir l'écran Compte. */}
+          <ThemedText type="small" themeColor="textSecondary">
+            Connecté : {user?.displayName ?? user?.email}
+          </ThemedText>
+          <AccountActions />
         </ThemedView>
 
         <ThemedText type="code" style={styles.code}>
