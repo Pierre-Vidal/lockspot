@@ -8,7 +8,6 @@ export type StatutPosition = 'chargement' | 'active' | 'refusee' | 'erreur';
 type EtatPosition = {
     statut: StatutPosition;
     position: Coordonnees | null;
-    /** Rayon d'incertitude du GPS, en mètres. */
     precisionMetres: number | null;
 };
 
@@ -17,7 +16,6 @@ export function usePositionUtilisateur(): EtatPosition {
 
     useEffect(() => {
         let abonnement: Location.LocationSubscription | null = null;
-        // Si l'écran est quitté pendant un `await`, on ne doit plus toucher à l'état.
         let annule = false;
 
         async function demarrerSuivi() {
@@ -49,7 +47,6 @@ export function usePositionUtilisateur(): EtatPosition {
 
         demarrerSuivi();
 
-        // Nettoyage : on arrête le GPS en quittant l'écran (économie de batterie).
         return () => {
             annule = true;
             abonnement?.remove();

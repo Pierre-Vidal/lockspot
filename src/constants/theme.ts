@@ -18,7 +18,6 @@ export const espacements = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as const;
 
 export const arrondis = { sm: 8, md: 16, lg: 24, pilule: 999 } as const;
 
-/** Polices de la maquette, chargées avec useFonts dans src/app/_layout.tsx. */
 export const polices = {
     corps: 'DMSans_400Regular',
     moyen: 'DMSans_500Medium',

@@ -54,10 +54,6 @@ export function emprise(points: PositionMapbox[]): Emprise | null {
     };
 }
 
-/**
- * Distance « à vol d'oiseau » entre deux points, en mètres (formule de haversine).
- * Précise à quelques mètres près à l'échelle d'une ville : largement suffisant ici.
- */
 export function distanceMetres(a: Coordonnees, b: Coordonnees): number {
     const deltaLatitude = enRadians(b.latitude - a.latitude);
     const deltaLongitude = enRadians(b.longitude - a.longitude);

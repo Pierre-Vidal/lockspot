@@ -8,6 +8,10 @@ const SYMBOLES = {
     cadenas: { ios: 'lock.fill', android: 'lock', web: 'lock' },
     chevronDroite: { ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' },
     recentrer: { ios: 'location.fill', android: 'my_location', web: 'my_location' },
+    retour: { ios: 'chevron.left', android: 'arrow_back', web: 'arrow_back' },
+    recherche: { ios: 'magnifyingglass', android: 'search', web: 'search' },
+    lieu: { ios: 'mappin.and.ellipse', android: 'location_on', web: 'location_on' },
+    effacer: { ios: 'xmark', android: 'close', web: 'close' },
 } as const satisfies Record<string, SymbolViewProps['name']>;
 
 export type NomIcone = keyof typeof SYMBOLES;

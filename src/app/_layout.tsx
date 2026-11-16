@@ -14,10 +14,8 @@ import { couleurs } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
 import { initialiserMapbox } from '@/services/mapbox';
 
-// Exécuté une seule fois, au chargement de l'app, avant le premier affichage.
 initialiserMapbox();
 
-// Le splash reste affiché tant que les polices et la session ne sont pas prêtes.
 SplashScreen.preventAutoHideAsync();
 
 export default function LayoutRacine() {
@@ -39,7 +37,6 @@ export default function LayoutRacine() {
     );
 }
 
-/** Affiche l'appli si l'utilisateur est connecté, l'écran de connexion sinon. */
 function GardeConnexion() {
     const { user, loading } = useAuth();
 
@@ -47,13 +44,13 @@ function GardeConnexion() {
         if (!loading) SplashScreen.hideAsync();
     }, [loading]);
 
-    // Firebase restaure la session au démarrage : on n'affiche rien avant de savoir.
     if (loading) return null;
 
     return (
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: couleurs.fond } }}>
             <Stack.Protected guard={Boolean(user)}>
                 <Stack.Screen name="(onglets)" />
+                <Stack.Screen name="nouveau-coffre" options={{ animation: 'slide_from_bottom' }} />
             </Stack.Protected>
             <Stack.Protected guard={!user}>
                 <Stack.Screen name="login" />

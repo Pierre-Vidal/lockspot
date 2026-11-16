@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { RAYON_ZONE_METRES } from '@/constants/coffres';
+import { ErrorBanner } from '@/components/auth/error-banner';
 import { BadgePosition } from '@/components/carte/BadgePosition';
 import { CarteCoffres } from '@/components/carte/CarteCoffres';
 import { FicheCoffre, type EtatZone } from '@/components/coffres/FicheCoffre';
-import { arrondis, couleurs, espacements, typographie } from '@/constants/theme';
+import { arrondis, couleurs, espacements, polices, typographie } from '@/constants/theme';
 import { useAuth } from '@/hooks/use-auth';
+import { useCoffres } from '@/hooks/useCoffres';
 import { usePositionUtilisateur } from '@/hooks/usePositionUtilisateur';
-import { COFFRES_DE_TEST } from '@/mocks/coffres';
 import type { Coffre, Coordonnees } from '@/types/coffre';
 import { estDansZone } from '@/utils/geo';
 
@@ -25,7 +26,7 @@ export default function EcranCarte() {
     const [idCoffreSelectionne, setIdCoffreSelectionne] = useState<string | null>(null);
 
     const salutation = user?.displayName ? `Bonjour ${user.displayName}` : 'Bonjour';
-    const coffres = COFFRES_DE_TEST;
+    const { coffres, chargement, erreur } = useCoffres();
     const coffreSelectionne = coffres.find((coffre) => coffre.id === idCoffreSelectionne) ?? null;
 
     return (
@@ -39,12 +40,31 @@ export default function EcranCarte() {
             </View>
 
             <View style={styles.cadreCarte}>
-                <CarteCoffres
-                    coffres={coffres}
-                    positionUtilisateur={position}
-                    idCoffreSelectionne={idCoffreSelectionne}
-                    onSelectionCoffre={setIdCoffreSelectionne}
-                />
+                {chargement ? (
+                    <View style={styles.centre}>
+                        <ActivityIndicator size="large" color={couleurs.principale} />
+                    </View>
+                ) : (
+                    <CarteCoffres
+                        coffres={coffres}
+                        positionUtilisateur={position}
+                        idCoffreSelectionne={idCoffreSelectionne}
+                        onSelectionCoffre={setIdCoffreSelectionne}
+                    />
+                )}
+
+                {erreur && (
+                    <View style={styles.emplacementErreur}>
+                        <ErrorBanner message={erreur} />
+                    </View>
+                )}
+
+                {!chargement && coffres.length === 0 && (
+                    <View style={[styles.emplacementFiche, styles.vide]}>
+                        <Text style={styles.titreVide}>Aucun coffre pour l’instant</Text>
+                        <Text style={styles.texteVide}>Touchez « Nouveau coffre » pour créer le premier.</Text>
+                    </View>
+                )}
 
                 {coffreSelectionne && (
                     <Animated.View
@@ -77,8 +97,19 @@ const styles = StyleSheet.create({
         marginHorizontal: espacements.md,
         marginBottom: espacements.md,
         borderRadius: arrondis.lg,
-        overflow: 'hidden', // arrondit les coins de la carte
+        overflow: 'hidden',
     },
+    centre: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    emplacementErreur: { position: 'absolute', top: espacements.sm, left: espacements.sm, right: 64 },
+    vide: {
+        gap: espacements.xs,
+        padding: espacements.md,
+        borderRadius: arrondis.lg,
+        backgroundColor: couleurs.surface,
+        boxShadow: '0 8px 24px rgba(28, 41, 38, 0.12)',
+    },
+    titreVide: { fontFamily: polices.gras, fontSize: 15, color: couleurs.texte },
+    texteVide: { fontFamily: polices.corps, fontSize: 13, color: couleurs.texteSecondaire },
     emplacementFiche: {
         position: 'absolute',
         left: espacements.sm,
