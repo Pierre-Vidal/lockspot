@@ -29,7 +29,7 @@ function calculerEtatZone(coffre: Coffre, position: Coordonnees | null): EtatZon
 
 export default function EcranCarte() {
     const { user } = useAuth();
-    const { statut, position } = usePositionUtilisateur();
+    const { statut, position, rafraichir } = usePositionUtilisateur();
     const { chargee: carteChargee, surChargee } = useChargementCarte();
     // On prend l'id et pas l'objet pour afficher la version à jour venant de Firestore
     const [idCoffreSelectionne, setIdCoffreSelectionne] = useState<string | null>(null);
@@ -81,7 +81,7 @@ export default function EcranCarte() {
                     <Text style={styles.surtitre}>{salutation.toUpperCase()}</Text>
                     <Text style={styles.titre}>Vos coffres</Text>
                 </View>
-                <BadgePosition statut={statut} />
+                <BadgePosition statut={statut} onRafraichir={rafraichir} />
             </View>
 
             <View style={styles.cadreCarte}>

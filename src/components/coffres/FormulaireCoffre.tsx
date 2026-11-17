@@ -26,7 +26,7 @@ type Props = {
 /** Écran plein format (carte + recherche + panneau) partagé par la création et la modification. */
 export function FormulaireCoffre({ coffre }: Props) {
     const marges = useSafeAreaInsets();
-    const { statut, position } = usePositionUtilisateur();
+    const { statut, position, rafraichir } = usePositionUtilisateur();
     const formulaire = useFormulaireCoffre(coffre);
     const { notifierSiDansLaZone } = useNotifications();
     const { chargee, surChargee } = useChargementCarte();
@@ -84,7 +84,11 @@ export function FormulaireCoffre({ coffre }: Props) {
                 </View>
 
                 <View style={styles.bas}>
-                    <BoutonPositionActuelle statut={statut} onPress={() => position && choisirCoordonnees(position)} />
+                    <BoutonPositionActuelle
+                        statut={statut}
+                        onPress={() => position && choisirCoordonnees(position)}
+                        onReessayer={rafraichir}
+                    />
                 </View>
             </View>
 
