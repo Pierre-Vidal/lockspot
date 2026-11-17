@@ -30,6 +30,14 @@ export default function EcranCompte() {
     // Évite un second appui pendant que le téléphone affiche ses fenêtres de permission.
     const [changementEnCours, setChangementEnCours] = useState(false);
 
+    // Ouvre la page de Lockspot dans les réglages du téléphone (permissions, notifications, position).
+    // Android et iOS n'autorisent pas d'ouvrir directement la section biométrie du système.
+    function ouvrirReglagesTelephone() {
+        Linking.openSettings().catch(() => {
+            Alert.alert('Réglages indisponibles', 'Ouvrez les réglages du téléphone, puis l’application Lockspot.');
+        });
+    }
+
     function proposerReglages(titre: string, message: string) {
         Alert.alert(titre, message, [
             { text: 'Plus tard', style: 'cancel' },
@@ -166,7 +174,7 @@ export default function EcranCompte() {
                     <LigneReglage
                         icone="reglages"
                         libelle="Sécurité et biométrie"
-                        onPress={() => Alert.alert('Bientôt disponible', 'Les réglages de sécurité arrivent prochainement.')}
+                        onPress={ouvrirReglagesTelephone}
                         droite={<Icone nom="chevronDroite" couleur={couleurs.texteSecondaire} taille={18} />}
                     />
                     <LigneReglage icone="deconnexion" libelle="Se déconnecter" onPress={seDeconnecter} danger />
