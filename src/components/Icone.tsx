@@ -12,6 +12,13 @@ const SYMBOLES = {
     recherche: { ios: 'magnifyingglass', android: 'search', web: 'search' },
     lieu: { ios: 'mappin.and.ellipse', android: 'location_on', web: 'location_on' },
     effacer: { ios: 'xmark', android: 'close', web: 'close' },
+    oeil: { ios: 'eye', android: 'visibility', web: 'visibility' },
+    oeilBarre: { ios: 'eye.slash', android: 'visibility_off', web: 'visibility_off' },
+    cloche: { ios: 'bell', android: 'notifications', web: 'notifications' },
+    reglages: { ios: 'gearshape', android: 'settings', web: 'settings' },
+    deconnexion: { ios: 'rectangle.portrait.and.arrow.right', android: 'logout', web: 'logout' },
+    corbeille: { ios: 'trash', android: 'delete', web: 'delete' },
+    suppressionCompte: { ios: 'person.crop.circle.badge.xmark', android: 'person_off', web: 'person_off' },
 } as const satisfies Record<string, SymbolViewProps['name']>;
 
 export type NomIcone = keyof typeof SYMBOLES;
