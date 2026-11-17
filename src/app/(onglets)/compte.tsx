@@ -106,6 +106,7 @@ export default function EcranCompte() {
                                 key={coffre.id}
                                 coffre={coffre}
                                 aProximite={estAProximite(coffre)}
+                                onModifier={() => router.push({ pathname: '/modifier-coffre', params: { id: coffre.id } })}
                                 onSupprimer={() => confirmerSuppressionCoffre(coffre)}
                             />
                         ))}

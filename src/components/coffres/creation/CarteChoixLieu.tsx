@@ -34,7 +34,12 @@ export function CarteChoixLieu({ lieu, onChoisirCoordonnees }: Props) {
                 if (longitude !== undefined && latitude !== undefined) onChoisirCoordonnees({ latitude, longitude });
             }}>
             <Camera
-                defaultSettings={{ centerCoordinate: CENTRE_FRANCE, zoomLevel: ZOOM_FRANCE }}
+                // Au départ : sur le coffre qu'on modifie, ou sur la France entière quand on en crée un
+                defaultSettings={
+                    lieu
+                        ? { centerCoordinate: versPositionMapbox(lieu), zoomLevel: ZOOM_LIEU }
+                        : { centerCoordinate: CENTRE_FRANCE, zoomLevel: ZOOM_FRANCE }
+                }
                 // Suivi de la géoloc de l'utilisateur tant qu'aucun lieu n'est choisi + vol quand il a été choisi
                 followUserLocation={!lieu}
                 followZoomLevel={ZOOM_POSITION}

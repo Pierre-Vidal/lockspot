@@ -8,6 +8,9 @@ import { NOM_COFFRE_LONGUEUR_MAX } from '@/constants/coffres';
 import { arrondis, couleurs, espacements, polices } from '@/constants/theme';
 
 type Props = {
+    /** Création : assistant en 2 étapes. Modification : nom et adresse visibles tout de suite. */
+    mode: 'creation' | 'modification';
+    /** Étape en cours (création uniquement). */
     etape: 1 | 2;
     nom: string;
     onChangeNom: (nom: string) => void;
@@ -16,41 +19,45 @@ type Props = {
     chargementAdresse: boolean;
     erreurEnvoi: string | null;
     envoiEnCours: boolean;
-    onCreer: () => void;
+    onValider: () => void;
     margeBas: number;
 };
 
-export function PanneauNouveauCoffre({
-                                         etape,
-                                         nom,
-                                         onChangeNom,
-                                         erreurNom,
-                                         adresse,
-                                         chargementAdresse,
-                                         erreurEnvoi,
-                                         envoiEnCours,
-                                         onCreer,
-                                         margeBas,
-                                     }: Props) {
+export function PanneauCoffre({
+                                  mode,
+                                  etape,
+                                  nom,
+                                  onChangeNom,
+                                  erreurNom,
+                                  adresse,
+                                  chargementAdresse,
+                                  erreurEnvoi,
+                                  envoiEnCours,
+                                  onValider,
+                                  margeBas,
+                              }: Props) {
+    const modification = mode === 'modification';
+    const formulaireVisible = modification || etape === 2;
+
     return (
         <View style={[styles.panneau, { paddingBottom: margeBas }]}>
             <View style={styles.poignee} />
 
             <View style={styles.entete}>
                 <View style={styles.titres}>
-                    <Text style={styles.surtitre}>NOUVEAU COFFRE</Text>
-                    <Text style={styles.titre}>{etape === 1 ? 'Choisissez un lieu' : 'Nommez ce lieu'}</Text>
+                    <Text style={styles.surtitre}>{modification ? 'MODIFIER LE COFFRE' : 'NOUVEAU COFFRE'}</Text>
+                    <Text style={styles.titre}>
+                        {modification ? 'Modifiez ce coffre' : etape === 1 ? 'Choisissez un lieu' : 'Nommez ce lieu'}
+                    </Text>
                 </View>
-                <View style={styles.badgeEtape}>
-                    <Text style={styles.texteEtape}>Étape {etape}/2</Text>
-                </View>
+                {modification ? null : (
+                    <View style={styles.badgeEtape}>
+                        <Text style={styles.texteEtape}>Étape {etape}/2</Text>
+                    </View>
+                )}
             </View>
 
-            {etape === 1 ? (
-                <Text style={styles.consigne}>
-                    Recherchez une adresse, touchez la carte ou utilisez votre position actuelle.
-                </Text>
-            ) : (
+            {formulaireVisible ? (
                 <>
                     <TextField
                         label="Nom du coffre"
@@ -61,7 +68,7 @@ export function PanneauNouveauCoffre({
                         maxLength={NOM_COFFRE_LONGUEUR_MAX}
                         autoCapitalize="sentences"
                         returnKeyType="done"
-                        onSubmitEditing={onCreer}
+                        onSubmitEditing={onValider}
                     />
 
                     <View style={styles.adresse}>
@@ -78,10 +85,24 @@ export function PanneauNouveauCoffre({
                         </View>
                     </View>
 
+                    {modification ? (
+                        <Text style={styles.aide}>
+                            Pour déplacer le coffre, recherchez une adresse, touchez la carte ou utilisez votre position actuelle.
+                        </Text>
+                    ) : null}
+
                     {erreurEnvoi ? <ErrorBanner message={erreurEnvoi} /> : null}
 
-                    <PrimaryButton label="Créer le coffre" onPress={onCreer} loading={envoiEnCours} />
+                    <PrimaryButton
+                        label={modification ? 'Enregistrer les modifications' : 'Créer le coffre'}
+                        onPress={onValider}
+                        loading={envoiEnCours}
+                    />
                 </>
+            ) : (
+                <Text style={styles.consigne}>
+                    Recherchez une adresse, touchez la carte ou utilisez votre position actuelle.
+                </Text>
             )}
         </View>
     );
@@ -118,6 +139,7 @@ const styles = StyleSheet.create({
     },
     texteEtape: { fontFamily: polices.gras, fontSize: 11, color: couleurs.principaleFoncee },
     consigne: { fontFamily: polices.corps, fontSize: 14, lineHeight: 20, color: couleurs.texteSecondaire },
+    aide: { fontFamily: polices.corps, fontSize: 12, lineHeight: 17, color: couleurs.texteDiscret },
     adresse: { flexDirection: 'row', alignItems: 'center', gap: espacements.sm + 4, paddingHorizontal: 2 },
     textesAdresse: { flex: 1, gap: 2 },
     libelleAdresse: { fontFamily: polices.corps, fontSize: 11, color: couleurs.texteDiscret },
