@@ -6,7 +6,6 @@ import { couleurs, espacements } from '@/constants/theme';
 
 import { BoutonOnglet } from './BoutonOnglet';
 
-/** Nom de la route affichée avec le gros bouton rond. */
 const ONGLET_CENTRAL = 'index';
 
 export function BarreOnglets({ state, descriptors, navigation, insets }: BottomTabBarProps) {
@@ -22,7 +21,6 @@ export function BarreOnglets({ state, descriptors, navigation, insets }: BottomT
                 const couleurIcone = central ? couleurs.surface : actif ? couleurs.texte : couleurs.texteSecondaire;
 
                 const allerSurOnglet = () => {
-                    // On prévient l'écran visé : il peut intercepter l'appui (ex. recentrer la carte).
                     const evenement = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
                     if (!actif && !evenement.defaultPrevented) {
                         Haptics.selectionAsync();

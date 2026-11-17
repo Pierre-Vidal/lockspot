@@ -54,6 +54,7 @@ function GardeConnexion() {
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: couleurs.fond } }}>
             <Stack.Protected guard={Boolean(user)}>
                 <Stack.Screen name="(onglets)" />
+                <Stack.Screen name="nouveau-coffre" options={{ animation: 'slide_from_bottom' }} />
             </Stack.Protected>
             <Stack.Protected guard={!user}>
                 <Stack.Screen name="login" />

@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth, getReactNativePersistence, initializeAuth, type Auth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 // Les variables EXPO_PUBLIC_* sont injectées dans le bundle au moment de la compilation.
 // Elles doivent être écrites en toutes lettres (pas de process.env[nom]).
@@ -32,3 +33,4 @@ function createAuth(): Auth {
 }
 
 export const auth = createAuth();
+export const db = getFirestore(app);

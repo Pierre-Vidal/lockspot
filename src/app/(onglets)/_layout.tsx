@@ -1,11 +1,10 @@
-import { Tabs } from 'expo-router';
+import {router, Tabs} from 'expo-router';
 
 import { Icone } from '@/components/Icone';
 import { BarreOnglets } from '@/components/navigation/BarreOnglets';
 
 export default function LayoutOnglets() {
     return (
-        // La carte (index) s'ouvre en premier, même si l'onglet Compte est déclaré avant elle.
         <Tabs
             initialRouteName="index"
             tabBar={(props) => <BarreOnglets {...props} />}
@@ -25,10 +24,17 @@ export default function LayoutOnglets() {
                 }}
             />
             <Tabs.Screen
-                name="nouveau-coffre"
+                name="ajouter"
                 options={{
                     title: 'Nouveau coffre',
                     tabBarIcon: ({ color, size }) => <Icone nom="ajout" couleur={color} taille={size} />,
+                }}
+                // Ouverture en plein écran au lieu de changer d'onglet
+                listeners={{
+                        tabPress: (evenement) => {
+                        evenement.preventDefault();
+                        router.push('/nouveau-coffre');
+                    },
                 }}
             />
         </Tabs>

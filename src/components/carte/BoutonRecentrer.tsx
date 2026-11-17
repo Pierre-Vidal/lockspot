@@ -13,7 +13,6 @@ export function BoutonRecentrer({ onPress }: Props) {
             onPress={onPress}
             accessibilityRole="button"
             accessibilityLabel="Recentrer la carte"
-            // Zone d'appui élargie : plus facile à toucher qu'un bouton de 44 points seul.
             hitSlop={8}
             style={({ pressed }) => [styles.bouton, pressed && styles.appuye]}>
             <Icone nom="recentrer" couleur={couleurs.principale} taille={20} />

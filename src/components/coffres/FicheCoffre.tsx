@@ -6,7 +6,6 @@ import type { Coffre } from '@/types/coffre';
 
 import { EpingleCoffre } from './EpingleCoffre';
 
-/** `inconnu` : on n'a pas (encore) la position de l'utilisateur. */
 export type EtatZone = 'dans-zone' | 'hors-zone' | 'inconnu';
 
 const AFFICHAGE_ZONE: Record<EtatZone, { libelle: string; couleur: string }> = {
@@ -21,7 +20,6 @@ type Props = {
     onPress?: () => void;
 };
 
-/** Encadré affiché en bas de la carte quand un coffre est sélectionné. */
 export function FicheCoffre({ coffre, etatZone, onPress }: Props) {
     const zone = AFFICHAGE_ZONE[etatZone];
 

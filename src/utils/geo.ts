@@ -1,5 +1,6 @@
 import type { Coordonnees } from '@/types/coffre';
 
+// Mapbox inverse latitude et longitude
 export type PositionMapbox = [longitude: number, latitude: number];
 
 export type Emprise = { ne: PositionMapbox; sw: PositionMapbox };
@@ -13,6 +14,7 @@ export function versPositionMapbox({ latitude, longitude }: Coordonnees): Positi
     return [longitude, latitude];
 }
 
+// CircleLayer fait un rayon en pixels -> calcul du polygone pour avoir une zone en mètres
 export function contourCercle(centre: Coordonnees, rayonMetres: number, nombrePoints = 64): PositionMapbox[] {
     const latitude = enRadians(centre.latitude);
     const longitude = enRadians(centre.longitude);
@@ -54,10 +56,7 @@ export function emprise(points: PositionMapbox[]): Emprise | null {
     };
 }
 
-/**
- * Distance « à vol d'oiseau » entre deux points, en mètres (formule de haversine).
- * Précise à quelques mètres près à l'échelle d'une ville : largement suffisant ici.
- */
+// Formule de haversine pour la distance entre deux points d'une sphère
 export function distanceMetres(a: Coordonnees, b: Coordonnees): number {
     const deltaLatitude = enRadians(b.latitude - a.latitude);
     const deltaLongitude = enRadians(b.longitude - a.longitude);

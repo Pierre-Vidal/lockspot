@@ -4,15 +4,9 @@ import { Icone } from '@/components/Icone';
 import { couleurs } from '@/constants/theme';
 
 type Props = {
-    /** Largeur de la goutte, en points. */
     taille?: number;
 };
 
-/**
- * Épingle en forme de goutte : un carré à trois coins arrondis,
- * tourné de 45° pour que le coin pointu soit en bas.
- * Purement visuelle : utilisée sur la carte et dans la fiche d'un coffre.
- */
 export function EpingleCoffre({ taille = 34 }: Props) {
     const rayon = taille / 2;
 
@@ -28,7 +22,6 @@ export function EpingleCoffre({ taille = 34 }: Props) {
                     borderBottomLeftRadius: rayon,
                 },
             ]}>
-            {/* On annule la rotation pour que l'icône reste droite. */}
             <View style={styles.contreRotation}>
                 <Icone nom="cadenas" couleur={couleurs.surface} taille={taille * 0.47} />
             </View>

@@ -7,7 +7,6 @@ type Props = {
     libelle: string;
     icone: ReactNode;
     actif: boolean;
-    /** Bouton central mis en avant (le rond vert de la maquette). */
     central?: boolean;
     onPress: () => void;
 };
@@ -39,7 +38,7 @@ const styles = StyleSheet.create({
         width: TAILLE_ROND,
         height: TAILLE_ROND,
         borderRadius: TAILLE_ROND / 2,
-        marginTop: -TAILLE_ROND / 2, // fait dépasser le rond au-dessus de la barre
+        marginTop: -TAILLE_ROND / 2,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: couleurs.principale,
