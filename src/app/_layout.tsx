@@ -55,6 +55,8 @@ function GardeConnexion() {
             <Stack.Protected guard={Boolean(user)}>
                 <Stack.Screen name="(onglets)" />
                 <Stack.Screen name="nouveau-coffre" options={{ animation: 'slide_from_bottom' }} />
+                {/* Pas de geste de retour : on ferme le coffre avec les boutons, qui le verrouillent. */}
+                <Stack.Screen name="coffre/[id]" options={{ animation: 'fade', gestureEnabled: false }} />
             </Stack.Protected>
             <Stack.Protected guard={!user}>
                 <Stack.Screen name="login" />
