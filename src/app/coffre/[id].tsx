@@ -1,10 +1,11 @@
 import { Redirect, router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, AppState, Pressable, StyleSheet, Text, View } from 'react-native';
+import { AppState, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PrimaryButton } from '@/components/auth/primary-button';
+import { EcranChargement } from '@/components/EcranChargement';
 import { Icone } from '@/components/Icone';
 import { arrondis, couleurs, espacements, polices } from '@/constants/theme';
 import { useCoffres } from '@/hooks/useCoffres';
@@ -38,13 +39,7 @@ export default function EcranCoffreOuvert() {
 
     if (!autorise) return <Redirect href="/" />;
 
-    if (chargement || !coffre) {
-        return (
-            <View style={styles.centre}>
-                <ActivityIndicator size="large" color={couleurs.principale} />
-            </View>
-        );
-    }
+    if (chargement || !coffre) return <EcranChargement />;
 
     return (
         <SafeAreaView style={styles.ecran}>
@@ -83,7 +78,6 @@ const TAILLE_CARRE = 88;
 
 const styles = StyleSheet.create({
     ecran: { flex: 1, paddingHorizontal: espacements.lg, backgroundColor: couleurs.fond },
-    centre: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: couleurs.fond },
     boutonRetour: {
         width: 44,
         height: 44,

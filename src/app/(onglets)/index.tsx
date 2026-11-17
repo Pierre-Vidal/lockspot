@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
@@ -7,12 +7,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { RAYON_ZONE_METRES } from '@/constants/coffres';
 import { OUVRIR_COFFRE_DANS_LA_ZONE } from '@/constants/notifications';
+import { EcranChargement } from '@/components/EcranChargement';
 import { ErrorBanner } from '@/components/auth/error-banner';
 import { BadgePosition } from '@/components/carte/BadgePosition';
 import { CarteCoffres } from '@/components/carte/CarteCoffres';
 import { FicheCoffre, type EtatZone } from '@/components/coffres/FicheCoffre';
 import { arrondis, couleurs, espacements, polices, typographie } from '@/constants/theme';
 import { useAuth } from '@/hooks/use-auth';
+import { useChargementCarte } from '@/hooks/useChargementCarte';
 import { useCoffres } from '@/hooks/useCoffres';
 import { usePositionUtilisateur } from '@/hooks/usePositionUtilisateur';
 import type { Coffre, Coordonnees } from '@/types/coffre';
@@ -28,6 +30,7 @@ function calculerEtatZone(coffre: Coffre, position: Coordonnees | null): EtatZon
 export default function EcranCarte() {
     const { user } = useAuth();
     const { statut, position } = usePositionUtilisateur();
+    const { chargee: carteChargee, surChargee } = useChargementCarte();
     // On prend l'id et pas l'objet pour afficher la version à jour venant de Firestore
     const [idCoffreSelectionne, setIdCoffreSelectionne] = useState<string | null>(null);
 
@@ -82,18 +85,18 @@ export default function EcranCarte() {
             </View>
 
             <View style={styles.cadreCarte}>
-                {chargement ? (
-                    <View style={styles.centre}>
-                        <ActivityIndicator size="large" color={couleurs.principale} />
-                    </View>
-                ) : (
+                {!chargement && (
                     <CarteCoffres
                         coffres={coffres}
                         positionUtilisateur={position}
                         idCoffreSelectionne={idCoffreSelectionne}
                         onSelectionCoffre={setIdCoffreSelectionne}
+                        onChargee={surChargee}
                     />
                 )}
+
+                {/* Le logo reste tant que les coffres ou la carte ne sont pas prêts, puis s'efface en fondu. */}
+                {(chargement || !carteChargee) && <EcranChargement superposition />}
 
                 {(erreur || message) && (
                     <View style={styles.emplacementErreur}>
@@ -142,7 +145,6 @@ const styles = StyleSheet.create({
         borderRadius: arrondis.lg,
         overflow: 'hidden',
     },
-    centre: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     emplacementErreur: { position: 'absolute', top: espacements.sm, left: espacements.sm, right: 64 },
     vide: {
         gap: espacements.xs,

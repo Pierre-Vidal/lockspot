@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { EcranChargement } from '@/components/EcranChargement';
 import { FormulaireCoffre } from '@/components/coffres/FormulaireCoffre';
 import { couleurs, espacements, polices } from '@/constants/theme';
 import { useCoffres } from '@/hooks/useCoffres';
@@ -11,13 +12,7 @@ export default function EcranModifierCoffre() {
     const { coffres, chargement } = useCoffres();
     const coffre = coffres.find((candidat) => candidat.id === id);
 
-    if (chargement) {
-        return (
-            <View style={styles.centre}>
-                <ActivityIndicator size="large" color={couleurs.principale} />
-            </View>
-        );
-    }
+    if (chargement) return <EcranChargement />;
 
     if (!coffre) {
         return (

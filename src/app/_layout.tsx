@@ -11,6 +11,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { EcranChargement } from '@/components/EcranChargement';
 import { couleurs } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
 import { NotificationsProvider } from '@/hooks/useNotifications';
@@ -24,8 +25,14 @@ import { configurerNotifications } from '@/services/notifications';
 initialiserMapbox();
 configurerNotifications();
 
-// Le splash reste affiché tant que les polices et la session ne sont pas prêtes.
+// Le splash natif reste affiché jusqu'à ce que l'écran de chargement (le même logo) soit à l'écran.
+// En build de développement, expo-dev-client le retire lui-même et affiche un écran blanc pendant le
+// téléchargement du code depuis Metro : ce blanc n'existe pas dans les builds preview et production.
 SplashScreen.preventAutoHideAsync();
+
+function masquerSplash() {
+    SplashScreen.hide();
+}
 
 export default function LayoutRacine() {
     const [policesChargees, erreurPolices] = useFonts({
@@ -36,7 +43,8 @@ export default function LayoutRacine() {
         Manrope_800ExtraBold,
     });
 
-    if (!policesChargees && !erreurPolices) return null;
+    // Le logo ne dépend pas des polices : on l'affiche tout de suite, sans écran vide.
+    if (!policesChargees && !erreurPolices) return <EcranChargement onAffiche={masquerSplash} />;
 
     return (
         <AuthProvider>
@@ -52,17 +60,13 @@ export default function LayoutRacine() {
 function GardeConnexion() {
     const { user, loading } = useAuth();
 
-    useEffect(() => {
-        if (!loading) SplashScreen.hideAsync();
-    }, [loading]);
-
     // Une notification touchée sans être connecté ne doit pas ouvrir un coffre après la prochaine connexion.
     useEffect(() => {
         if (!loading && !user) Notifications.clearLastNotificationResponse();
     }, [loading, user]);
 
-    // Firebase restaure la session au démarrage : on n'affiche rien avant de savoir.
-    if (loading) return null;
+    // Firebase restaure la session au démarrage : le logo reste affiché le temps de savoir si on est connecté.
+    if (loading) return <EcranChargement onAffiche={masquerSplash} />;
 
     return (
         <>

@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { EcranChargement } from '@/components/EcranChargement';
 import { BoutonPositionActuelle } from '@/components/coffres/creation/BoutonPositionActuelle';
 import { CarteChoixLieu } from '@/components/coffres/creation/CarteChoixLieu';
 import { PanneauCoffre } from '@/components/coffres/creation/PanneauCoffre';
 import { RechercheAdresse } from '@/components/coffres/creation/RechercheAdresse';
 import { arrondis, couleurs, espacements } from '@/constants/theme';
+import { useChargementCarte } from '@/hooks/useChargementCarte';
 import { useFormulaireCoffre } from '@/hooks/useFormulaireCoffre';
 import { useNotifications } from '@/hooks/useNotifications';
 import { usePositionUtilisateur } from '@/hooks/usePositionUtilisateur';
@@ -27,6 +29,7 @@ export function FormulaireCoffre({ coffre }: Props) {
     const { statut, position } = usePositionUtilisateur();
     const formulaire = useFormulaireCoffre(coffre);
     const { notifierSiDansLaZone } = useNotifications();
+    const { chargee, surChargee } = useChargementCarte();
     const [texteRecherche, setTexteRecherche] = useState('');
     const recherche = useRechercheAdresse(texteRecherche, position);
 
@@ -60,7 +63,13 @@ export function FormulaireCoffre({ coffre }: Props) {
     return (
         <KeyboardAvoidingView behavior="padding" style={styles.ecran}>
             <View style={styles.zoneCarte}>
-                <CarteChoixLieu lieu={formulaire.lieu?.coordonnees ?? null} onChoisirCoordonnees={choisirCoordonnees} />
+                <CarteChoixLieu
+                    lieu={formulaire.lieu?.coordonnees ?? null}
+                    onChoisirCoordonnees={choisirCoordonnees}
+                    onChargee={surChargee}
+                />
+                {/* Sous la recherche et le bouton de position, qui restent utilisables pendant le chargement. */}
+                {!chargee && <EcranChargement superposition />}
 
                 <View style={[styles.haut, { top: marges.top + espacements.sm }]}>
                     <RechercheAdresse

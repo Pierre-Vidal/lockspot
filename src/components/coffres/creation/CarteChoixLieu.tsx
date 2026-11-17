@@ -10,6 +10,8 @@ import { cercleGeographique, contourCercle, versPositionMapbox } from '@/utils/g
 type Props = {
     lieu: Coordonnees | null;
     onChoisirCoordonnees: (coordonnees: Coordonnees) => void;
+    /** Appelé quand la carte est chargée (ou n'a pas pu l'être) : l'écran peut retirer son logo de chargement. */
+    onChargee?: () => void;
 };
 
 const CENTRE_FRANCE: [number, number] = [2.35, 46.6];
@@ -17,7 +19,7 @@ const ZOOM_FRANCE = 4.5;
 const ZOOM_LIEU = 16;
 const ZOOM_POSITION = 15;
 
-export function CarteChoixLieu({ lieu, onChoisirCoordonnees }: Props) {
+export function CarteChoixLieu({ lieu, onChoisirCoordonnees, onChargee }: Props) {
     const basDeLaZone = lieu ? contourCercle(lieu, RAYON_ZONE_METRES)[32] : undefined;
 
     return (
@@ -29,6 +31,8 @@ export function CarteChoixLieu({ lieu, onChoisirCoordonnees }: Props) {
             pitchEnabled={false}
             logoPosition={{ bottom: 36, left: 8 }}
             attributionPosition={{ bottom: 36, right: 8 }}
+            onDidFinishLoadingMap={onChargee}
+            onMapLoadingError={onChargee}
             onPress={(point) => {
                 const [longitude, latitude] = point.geometry.coordinates;
                 if (longitude !== undefined && latitude !== undefined) onChoisirCoordonnees({ latitude, longitude });
