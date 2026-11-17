@@ -3,9 +3,9 @@ import { useRef, useState } from 'react';
 
 import { NOM_COFFRE_LONGUEUR_MAX } from '@/constants/coffres';
 import { useAuth } from '@/hooks/use-auth';
-import { creerCoffre } from '@/services/coffres';
+import { creerCoffre, modifierCoffre } from '@/services/coffres';
 import { adresseDepuisCoordonnees, type SuggestionAdresse } from '@/services/geocodage';
-import type { Coordonnees } from '@/types/coffre';
+import type { Coffre, Coordonnees } from '@/types/coffre';
 
 export type LieuChoisi = {
     coordonnees: Coordonnees;
@@ -23,11 +23,20 @@ function validerNom(nom: string): string | null {
     return null;
 }
 
-export function useCreationCoffre() {
+/**
+ * État du formulaire d'un coffre, pour la création comme pour la modification.
+ * Sans argument : formulaire vide (création). Avec un coffre : nom et lieu pré-remplis,
+ * et `enregistrer` met ce coffre à jour au lieu d'en créer un nouveau.
+ * Les valeurs de départ ne sont lues qu'une fois : les mises à jour de Firestore pendant
+ * la saisie n'écrasent donc pas ce que l'utilisateur tape.
+ */
+export function useFormulaireCoffre(coffre?: Coffre) {
     const { user } = useAuth();
-    const [lieu, setLieu] = useState<LieuChoisi | null>(null);
+    const [lieu, setLieu] = useState<LieuChoisi | null>(
+        coffre ? { coordonnees: coffre.coordonnees, adresse: coffre.adresse } : null,
+    );
     const [chargementAdresse, setChargementAdresse] = useState(false);
-    const [nom, setNom] = useState('');
+    const [nom, setNom] = useState(coffre?.nom ?? '');
     const [erreurNom, setErreurNom] = useState<string | null>(null);
     const [erreurEnvoi, setErreurEnvoi] = useState<string | null>(null);
     const [envoiEnCours, setEnvoiEnCours] = useState(false);
@@ -61,7 +70,8 @@ export function useCreationCoffre() {
         if (erreurNom) setErreurNom(null);
     }
 
-    async function creer(): Promise<boolean> {
+    /** Crée le coffre, ou met à jour celui passé au hook. Renvoie `true` si c'est parti. */
+    async function enregistrer(): Promise<boolean> {
         const erreur = validerNom(nom);
         setErreurNom(erreur);
         setErreurEnvoi(null);
@@ -71,10 +81,12 @@ export function useCreationCoffre() {
         // En ligne, on attend le serveur pour pouvoir afficher une erreur
         // Hors ligne, Firestore envoie le coffre plus tard : inutile de bloquer l'écran
         try {
-            const envoi = creerCoffre(
-                { nom, adresse: lieu.adresse ?? coordonneesEnTexte(lieu.coordonnees), coordonnees: lieu.coordonnees },
-                user.uid,
-            );
+            const donnees = {
+                nom,
+                adresse: lieu.adresse ?? coordonneesEnTexte(lieu.coordonnees),
+                coordonnees: lieu.coordonnees,
+            };
+            const envoi = coffre ? modifierCoffre(coffre.id, donnees) : creerCoffre(donnees, user.uid);
             const { isConnected } = await NetInfo.fetch();
             if (isConnected) {
                 await envoi;
@@ -83,7 +95,11 @@ export function useCreationCoffre() {
             }
             return true;
         } catch {
-            setErreurEnvoi("Le coffre n'a pas pu être créé. Réessayez dans un instant.");
+            setErreurEnvoi(
+                coffre
+                    ? "Le coffre n'a pas pu être modifié. Réessayez dans un instant."
+                    : "Le coffre n'a pas pu être créé. Réessayez dans un instant.",
+            );
             return false;
         } finally {
             setEnvoiEnCours(false);
@@ -100,6 +116,6 @@ export function useCreationCoffre() {
         choisirSuggestion,
         choisirCoordonnees,
         modifierNom,
-        creer,
+        enregistrer,
     };
 }

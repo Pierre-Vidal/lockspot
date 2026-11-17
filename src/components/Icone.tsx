@@ -17,6 +17,7 @@ const SYMBOLES = {
     cloche: { ios: 'bell', android: 'notifications', web: 'notifications' },
     reglages: { ios: 'gearshape', android: 'settings', web: 'settings' },
     deconnexion: { ios: 'rectangle.portrait.and.arrow.right', android: 'logout', web: 'logout' },
+    modifier: { ios: 'pencil', android: 'edit', web: 'edit' },
     corbeille: { ios: 'trash', android: 'delete', web: 'delete' },
     suppressionCompte: { ios: 'person.crop.circle.badge.xmark', android: 'person_off', web: 'person_off' },
     cadenasOuvert: { ios: 'lock.open.fill', android: 'lock_open', web: 'lock_open' },

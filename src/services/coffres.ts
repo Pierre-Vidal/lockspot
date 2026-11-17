@@ -7,6 +7,7 @@ import {
     onSnapshot,
     query,
     serverTimestamp,
+    updateDoc,
     where,
     writeBatch,
     type DocumentData,
@@ -59,6 +60,15 @@ export async function creerCoffre(nouveauCoffre: NouveauCoffre, proprietaireId: 
         coordonnees: nouveauCoffre.coordonnees,
         proprietaireId,
         creeLe: serverTimestamp(),
+    });
+}
+
+/** Met à jour le nom, l'adresse et l'emplacement d'un coffre. Le propriétaire et la date de création ne changent pas. */
+export async function modifierCoffre(id: string, modifications: NouveauCoffre): Promise<void> {
+    await updateDoc(doc(db, COLLECTION_COFFRES, id), {
+        nom: modifications.nom.trim(),
+        adresse: modifications.adresse,
+        coordonnees: modifications.coordonnees,
     });
 }
 
