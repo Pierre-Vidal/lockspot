@@ -10,6 +10,7 @@ import { PanneauCoffre } from '@/components/coffres/creation/PanneauCoffre';
 import { RechercheAdresse } from '@/components/coffres/creation/RechercheAdresse';
 import { arrondis, couleurs, espacements } from '@/constants/theme';
 import { useFormulaireCoffre } from '@/hooks/useFormulaireCoffre';
+import { useNotifications } from '@/hooks/useNotifications';
 import { usePositionUtilisateur } from '@/hooks/usePositionUtilisateur';
 import { useRechercheAdresse } from '@/hooks/useRechercheAdresse';
 import type { SuggestionAdresse } from '@/services/geocodage';
@@ -25,6 +26,7 @@ export function FormulaireCoffre({ coffre }: Props) {
     const marges = useSafeAreaInsets();
     const { statut, position } = usePositionUtilisateur();
     const formulaire = useFormulaireCoffre(coffre);
+    const { notifierSiDansLaZone } = useNotifications();
     const [texteRecherche, setTexteRecherche] = useState('');
     const recherche = useRechercheAdresse(texteRecherche, position);
 
@@ -41,7 +43,15 @@ export function FormulaireCoffre({ coffre }: Props) {
 
     async function valider() {
         Keyboard.dismiss();
+        const { lieu, nom } = formulaire;
         if (await formulaire.enregistrer()) {
+            // Coffre créé, ou déplacé, là où l'on se trouve : on prévient tout de suite qu'on peut l'ouvrir.
+            // Un simple changement de nom ne déclenche rien.
+            const aBouge =
+                !coffre ||
+                lieu?.coordonnees.latitude !== coffre.coordonnees.latitude ||
+                lieu?.coordonnees.longitude !== coffre.coordonnees.longitude;
+            if (lieu && aBouge) notifierSiDansLaZone(nom.trim(), lieu.coordonnees, position, coffre?.id);
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             router.back();
         }

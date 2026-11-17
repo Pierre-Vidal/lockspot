@@ -1,11 +1,12 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import type { BottomTabNavigationProp } from 'expo-router/tabs';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { RAYON_ZONE_METRES } from '@/constants/coffres';
+import { OUVRIR_COFFRE_DANS_LA_ZONE } from '@/constants/notifications';
 import { ErrorBanner } from '@/components/auth/error-banner';
 import { BadgePosition } from '@/components/carte/BadgePosition';
 import { CarteCoffres } from '@/components/carte/CarteCoffres';
@@ -33,12 +34,42 @@ export default function EcranCarte() {
     const salutation = user?.displayName ? `Bonjour ${user.displayName}` : 'Bonjour';
     const { coffres, chargement, erreur } = useCoffres();
     const coffreSelectionne = coffres.find((coffre) => coffre.id === idCoffreSelectionne) ?? null;
-    const { deverrouiller, message, effacerMessage } = useDeverrouillage({ coffres, position, idCoffreSelectionne });
+    const { deverrouiller, deverrouillerCoffre, message, effacerMessage } = useDeverrouillage({
+        coffres,
+        position,
+        idCoffreSelectionne,
+    });
 
     // Le bouton central « Déverrouiller » est l'onglet de cet écran : BarreOnglets émet « tabPress »
     // à chaque appui, y compris quand on est déjà sur la carte.
     const navigation = useNavigation<BottomTabNavigationProp<Record<string, object | undefined>>>();
     useEffect(() => navigation.addListener('tabPress', deverrouiller), [navigation, deverrouiller]);
+
+    // Ouverture demandée depuis une notification (voir useOuvertureDepuisNotification) :
+    // on attend la liste des coffres et la position, puis on tente d'ouvrir comme avec le bouton central.
+    const { ouvrir } = useLocalSearchParams<{ ouvrir?: string }>();
+    const ouvertureLancee = useRef(false);
+
+    const ouvrirDepuisNotification = useCallback(
+        (idCoffre: string | null) => {
+            // On montre le coffre visé sur la carte, même si l'ouverture est refusée (hors zone, etc.).
+            if (idCoffre) setIdCoffreSelectionne(idCoffre);
+            deverrouillerCoffre(idCoffre);
+        },
+        [deverrouillerCoffre],
+    );
+
+    useEffect(() => {
+        if (!ouvrir) {
+            ouvertureLancee.current = false;
+            return;
+        }
+        if (ouvertureLancee.current || chargement || statut === 'chargement') return;
+
+        ouvertureLancee.current = true;
+        router.setParams({ ouvrir: undefined });
+        ouvrirDepuisNotification(ouvrir === OUVRIR_COFFRE_DANS_LA_ZONE ? null : ouvrir);
+    }, [ouvrir, chargement, statut, ouvrirDepuisNotification]);
 
     return (
         <SafeAreaView edges={['top']} style={styles.ecran}>

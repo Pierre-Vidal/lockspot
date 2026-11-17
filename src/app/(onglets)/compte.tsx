@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ErrorBanner } from '@/components/auth/error-banner';
@@ -14,6 +14,7 @@ import { RAYON_ZONE_METRES } from '@/constants/coffres';
 import { couleurs, espacements, polices } from '@/constants/theme';
 import { useAuth } from '@/hooks/use-auth';
 import { useCoffres } from '@/hooks/useCoffres';
+import { useNotifications } from '@/hooks/useNotifications';
 import { usePositionRecente } from '@/hooks/usePositionRecente';
 import { describeAuthError } from '@/services/auth-errors';
 import { supprimerCoffre, supprimerTousLesCoffres } from '@/services/coffres';
@@ -25,8 +26,39 @@ export default function EcranCompte() {
     const { user, signOut, deleteAccount } = useAuth();
     const { coffres, chargement, erreur } = useCoffres();
     const position = usePositionRecente();
-    // Provisoire : l'interrupteur n'est pas encore relié aux vraies notifications.
-    const [notifications, setNotifications] = useState(true);
+    const { actives: notifications, changer: changerNotifications } = useNotifications();
+    // Évite un second appui pendant que le téléphone affiche ses fenêtres de permission.
+    const [changementEnCours, setChangementEnCours] = useState(false);
+
+    function proposerReglages(titre: string, message: string) {
+        Alert.alert(titre, message, [
+            { text: 'Plus tard', style: 'cancel' },
+            { text: 'Ouvrir les réglages', onPress: () => Linking.openSettings() },
+        ]);
+    }
+
+    async function basculerNotifications(voulues: boolean) {
+        if (changementEnCours) return;
+        setChangementEnCours(true);
+        try {
+            const resultat = await changerNotifications(voulues);
+            if (resultat === 'notifications-refusees') {
+                proposerReglages(
+                    'Notifications désactivées',
+                    'Pour recevoir les alertes de proximité, autorisez les notifications de Lockspot dans les réglages du téléphone.',
+                );
+            } else if (resultat === 'position-arriere-plan-refusee') {
+                proposerReglages(
+                    'Position « tout le temps » conseillée',
+                    'Sans elle, vous êtes prévenu seulement quand l’appli est ouverte. Pour l’être aussi appli fermée, choisissez « Toujours autoriser » pour la position de Lockspot dans les réglages.',
+                );
+            }
+        } catch (erreurActivation) {
+            Alert.alert('Réglage impossible', describeAuthError(erreurActivation).message);
+        } finally {
+            setChangementEnCours(false);
+        }
+    }
 
     function estAProximite(coffre: Coffre): boolean {
         return position !== null && estDansZone(position, coffre.coordonnees, RAYON_ZONE_METRES);
@@ -120,11 +152,12 @@ export default function EcranCompte() {
                     <LigneReglage
                         icone="cloche"
                         libelle="Notifications"
-                        onPress={() => setNotifications((actif) => !actif)}
+                        onPress={() => basculerNotifications(!notifications)}
                         droite={
                             <Switch
                                 value={notifications}
-                                onValueChange={setNotifications}
+                                onValueChange={basculerNotifications}
+                                disabled={changementEnCours}
                                 trackColor={{ false: '#C9C5BE', true: couleurs.principale }}
                                 thumbColor="#FFFFFF"
                             />
