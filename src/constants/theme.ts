@@ -1,65 +1,37 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
-import '@/global.css';
-
-import { Platform } from 'react-native';
-
-export const Colors = {
-  light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-  },
-  dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-  },
+export const couleurs = {
+    fond: '#EEE6DB',
+    surface: '#FEFBF7',
+    surfaceDouce: '#F7F1E9',
+    texte: '#1C2926',
+    texteSecondaire: '#6D7874',
+    texteDiscret: '#929995',
+    principale: '#00B38B',
+    principaleFoncee: '#0E9577',
+    principaleLegere: '#D9F3EB',
+    marqueur: '#00BE63',
+    attention: '#987035',
+    bordure: '#E6E0D6',
+    erreur: '#D64545',
+    erreurLegere: '#F9E5E4',
 } as const;
 
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
+export const espacements = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as const;
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
+export const arrondis = { sm: 8, md: 16, lg: 24, pilule: 999 } as const;
 
-export const Spacing = {
-  half: 2,
-  one: 4,
-  two: 8,
-  three: 16,
-  four: 24,
-  five: 32,
-  six: 64,
+/** Polices de la maquette, chargées avec useFonts dans src/app/_layout.tsx. */
+export const polices = {
+    corps: 'DMSans_400Regular',
+    moyen: 'DMSans_500Medium',
+    semiGras: 'DMSans_600SemiBold',
+    gras: 'DMSans_700Bold',
+    titre: 'Manrope_800ExtraBold',
 } as const;
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
-export const MaxContentWidth = 800;
+export const typographie = {
+    surtitre: { fontSize: 12, fontWeight: '700', letterSpacing: 1.5 },
+    titre: { fontSize: 30, fontWeight: '800' },
+    sousTitre: { fontSize: 18, fontWeight: '700' },
+    corps: { fontSize: 15, fontWeight: '400' },
+    legende: { fontSize: 12, fontWeight: '500' },
+} as const;
