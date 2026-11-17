@@ -1,7 +1,7 @@
 import { useState, type Ref } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
 
-import { Icon } from '@/components/icons';
+import { Icone } from '@/components/Icone';
 import { arrondis, couleurs, polices } from '@/constants/theme';
 
 type TextFieldProps = Omit<TextInputProps, 'style'> & {
@@ -52,7 +52,7 @@ export function TextField({
             accessibilityRole="button"
             accessibilityLabel={revealed ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
             style={styles.toggle}>
-            <Icon name={revealed ? 'eyeOff' : 'eye'} color={couleurs.texteSecondaire} />
+            <Icone nom={revealed ? 'oeilBarre' : 'oeil'} couleur={couleurs.texteSecondaire} taille={22} />
           </Pressable>
         )}
       </View>

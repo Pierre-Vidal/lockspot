@@ -1,6 +1,7 @@
 export const couleurs = {
     fond: '#EEE6DB',
     surface: '#FEFBF7',
+    surfaceDouce: '#F7F1E9',
     texte: '#1C2926',
     texteSecondaire: '#6D7874',
     texteDiscret: '#929995',

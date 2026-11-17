@@ -1,10 +1,14 @@
 import {
     addDoc,
     collection,
+    deleteDoc,
+    doc,
+    getDocs,
     onSnapshot,
     query,
     serverTimestamp,
     where,
+    writeBatch,
     type DocumentData,
     type QueryDocumentSnapshot,
     type Timestamp,
@@ -56,4 +60,26 @@ export async function creerCoffre(nouveauCoffre: NouveauCoffre, proprietaireId: 
         proprietaireId,
         creeLe: serverTimestamp(),
     });
+}
+
+export async function supprimerCoffre(id: string): Promise<void> {
+    await deleteDoc(doc(db, COLLECTION_COFFRES, id));
+}
+
+/**
+ * Supprime tous les coffres d'un utilisateur.
+ * À appeler avant la suppression de son compte : une fois déconnecté, il ne pourrait plus le faire.
+ */
+export async function supprimerTousLesCoffres(proprietaireId: string): Promise<void> {
+    const requete = query(collection(db, COLLECTION_COFFRES), where('proprietaireId', '==', proprietaireId));
+    const resultat = await getDocs(requete);
+    if (resultat.empty) return;
+
+    // Un lot Firestore accepte 500 opérations au maximum.
+    const TAILLE_LOT = 500;
+    for (let debut = 0; debut < resultat.docs.length; debut += TAILLE_LOT) {
+        const lot = writeBatch(db);
+        resultat.docs.slice(debut, debut + TAILLE_LOT).forEach((document) => lot.delete(document.ref));
+        await lot.commit();
+    }
 }

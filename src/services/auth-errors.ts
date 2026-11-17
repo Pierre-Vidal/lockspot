@@ -49,6 +49,13 @@ const MESSAGES: Record<string, AuthErrorInfo> = {
     message: 'Ce mot de passe ne respecte pas les règles de sécurité demandées',
   },
 
+  // Firestore (suppression des coffres)
+  'permission-denied': {
+    field: 'form',
+    message: 'Action refusée par la base de données : les règles de sécurité Firestore doivent autoriser le propriétaire à supprimer ses coffres.',
+  },
+  unavailable: NETWORK,
+
   // Réseau
   'auth/network-request-failed': NETWORK,
   'auth/timeout': NETWORK,
