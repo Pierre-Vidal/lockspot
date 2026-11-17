@@ -19,6 +19,7 @@ const SYMBOLES = {
     deconnexion: { ios: 'rectangle.portrait.and.arrow.right', android: 'logout', web: 'logout' },
     corbeille: { ios: 'trash', android: 'delete', web: 'delete' },
     suppressionCompte: { ios: 'person.crop.circle.badge.xmark', android: 'person_off', web: 'person_off' },
+    cadenasOuvert: { ios: 'lock.open.fill', android: 'lock_open', web: 'lock_open' },
 } as const satisfies Record<string, SymbolViewProps['name']>;
 
 export type NomIcone = keyof typeof SYMBOLES;

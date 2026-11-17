@@ -1,7 +1,9 @@
-import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from 'expo-router';
+import type { BottomTabNavigationProp } from 'expo-router/tabs';
+import { useEffect, useState } from 'react';
 
 import { RAYON_ZONE_METRES } from '@/constants/coffres';
 import { ErrorBanner } from '@/components/auth/error-banner';
@@ -14,6 +16,8 @@ import { useCoffres } from '@/hooks/useCoffres';
 import { usePositionUtilisateur } from '@/hooks/usePositionUtilisateur';
 import type { Coffre, Coordonnees } from '@/types/coffre';
 import { estDansZone } from '@/utils/geo';
+import { MessageDeverrouillage } from '@/components/carte/MessageDeverrouillage';
+import { useDeverrouillage } from '@/hooks/useDeverrouillage';
 
 function calculerEtatZone(coffre: Coffre, position: Coordonnees | null): EtatZone {
     if (!position) return 'inconnu';
@@ -29,6 +33,12 @@ export default function EcranCarte() {
     const salutation = user?.displayName ? `Bonjour ${user.displayName}` : 'Bonjour';
     const { coffres, chargement, erreur } = useCoffres();
     const coffreSelectionne = coffres.find((coffre) => coffre.id === idCoffreSelectionne) ?? null;
+    const { deverrouiller, message, effacerMessage } = useDeverrouillage({ coffres, position, idCoffreSelectionne });
+
+    // Le bouton central « Déverrouiller » est l'onglet de cet écran : BarreOnglets émet « tabPress »
+    // à chaque appui, y compris quand on est déjà sur la carte.
+    const navigation = useNavigation<BottomTabNavigationProp<Record<string, object | undefined>>>();
+    useEffect(() => navigation.addListener('tabPress', deverrouiller), [navigation, deverrouiller]);
 
     return (
         <SafeAreaView edges={['top']} style={styles.ecran}>
@@ -54,9 +64,10 @@ export default function EcranCarte() {
                     />
                 )}
 
-                {erreur && (
+                {(erreur || message) && (
                     <View style={styles.emplacementErreur}>
-                        <ErrorBanner message={erreur} />
+                        {erreur && <ErrorBanner message={erreur} />}
+                        {message && <MessageDeverrouillage message={message} onFermer={effacerMessage} />}
                     </View>
                 )}
 
