@@ -17,7 +17,7 @@ import type { Coordonnees } from '@/types/coffre';
 
 export default function EcranNouveauCoffre() {
     const marges = useSafeAreaInsets();
-    const { statut, position } = usePositionUtilisateur();
+    const { statut, position, rafraichir } = usePositionUtilisateur();
     const creation = useCreationCoffre();
     const [texteRecherche, setTexteRecherche] = useState('');
     const recherche = useRechercheAdresse(texteRecherche, position);
@@ -59,7 +59,11 @@ export default function EcranNouveauCoffre() {
                 </View>
 
                 <View style={styles.bas}>
-                    <BoutonPositionActuelle statut={statut} onPress={() => position && choisirCoordonnees(position)} />
+                    <BoutonPositionActuelle
+                        statut={statut}
+                        onPress={() => position && choisirCoordonnees(position)}
+                        onReessayer={rafraichir}
+                    />
                 </View>
             </View>
 

@@ -62,6 +62,7 @@
           "isAndroidForegroundServiceEnabled": true
         }
       ],
+      "expo-sharing",
       [
         "expo-image-picker",
         {

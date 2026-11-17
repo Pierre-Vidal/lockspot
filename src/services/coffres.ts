@@ -14,6 +14,7 @@ import {
     type Timestamp,
 } from 'firebase/firestore';
 
+import { supprimerToutLeContenu } from '@/services/contenuCoffres';
 import { db } from '@/services/firebase';
 import type { Coffre, NouveauCoffre } from '@/types/coffre';
 
@@ -64,6 +65,8 @@ export async function creerCoffre(nouveauCoffre: NouveauCoffre, proprietaireId: 
 
 export async function supprimerCoffre(id: string): Promise<void> {
     await deleteDoc(doc(db, COLLECTION_COFFRES, id));
+    // Après Firestore seulement : si la suppression échoue, le coffre et son contenu restent intacts.
+    supprimerToutLeContenu(id);
 }
 
 /**
@@ -79,7 +82,9 @@ export async function supprimerTousLesCoffres(proprietaireId: string): Promise<v
     const TAILLE_LOT = 500;
     for (let debut = 0; debut < resultat.docs.length; debut += TAILLE_LOT) {
         const lot = writeBatch(db);
-        resultat.docs.slice(debut, debut + TAILLE_LOT).forEach((document) => lot.delete(document.ref));
+        const documents = resultat.docs.slice(debut, debut + TAILLE_LOT);
+        documents.forEach((document) => lot.delete(document.ref));
         await lot.commit();
+        documents.forEach((document) => supprimerToutLeContenu(document.id));
     }
 }
