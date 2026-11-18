@@ -83,6 +83,7 @@ export function ajouterFichier(idCoffre: string, source: SourceFichier, parentId
         const fichierSource = new File(source.uri);
         const octets = await fichierSource.bytes();
         if (octets.length > TAILLE_MAX_OCTETS) {
+            effacerCopieTemporaire(fichierSource);
             throw new ErreurContenu(`« ${source.nom} » est trop volumineux (${TAILLE_MAX_OCTETS / 1024 / 1024} Mo maximum).`);
         }
 
