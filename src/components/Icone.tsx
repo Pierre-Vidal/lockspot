@@ -8,6 +8,7 @@ const SYMBOLES = {
     cadenas: { ios: 'lock.fill', android: 'lock', web: 'lock' },
     chevronDroite: { ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' },
     recentrer: { ios: 'location.fill', android: 'my_location', web: 'my_location' },
+    actualiser: { ios: 'arrow.clockwise', android: 'refresh', web: 'refresh' },
     retour: { ios: 'chevron.left', android: 'arrow_back', web: 'arrow_back' },
     recherche: { ios: 'magnifyingglass', android: 'search', web: 'search' },
     lieu: { ios: 'mappin.and.ellipse', android: 'location_on', web: 'location_on' },
@@ -21,6 +22,12 @@ const SYMBOLES = {
     corbeille: { ios: 'trash', android: 'delete', web: 'delete' },
     suppressionCompte: { ios: 'person.crop.circle.badge.xmark', android: 'person_off', web: 'person_off' },
     cadenasOuvert: { ios: 'lock.open.fill', android: 'lock_open', web: 'lock_open' },
+    dossier: { ios: 'folder', android: 'folder', web: 'folder' },
+    document: { ios: 'doc.text', android: 'description', web: 'description' },
+    note: { ios: 'note.text', android: 'sticky_note_2', web: 'sticky_note_2' },
+    image: { ios: 'photo', android: 'image', web: 'image' },
+    chevronBas: { ios: 'chevron.down', android: 'expand_more', web: 'expand_more' },
+    crayon: { ios: 'pencil', android: 'edit', web: 'edit' },
 } as const satisfies Record<string, SymbolViewProps['name']>;
 
 export type NomIcone = keyof typeof SYMBOLES;
