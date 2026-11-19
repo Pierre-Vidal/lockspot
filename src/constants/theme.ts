@@ -13,6 +13,16 @@ export const couleurs = {
     bordure: '#E6E0D6',
     erreur: '#D64545',
     erreurLegere: '#F9E5E4',
+    enteteSombre: '#1C2926',
+    enteteLueur: '#1F4D41',
+    texteSurSombre: '#F4F1EC',
+} as const;
+
+export const teintes = {
+    vert: { fond: '#D9F3EB', trait: '#0E9577' },
+    rouge: { fond: '#F6DFDC', trait: '#BD514D' },
+    jaune: { fond: '#F3E9C8', trait: '#8C7024' },
+    violet: { fond: '#E2E0F2', trait: '#615B99' },
 } as const;
 
 export const espacements = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 } as const;

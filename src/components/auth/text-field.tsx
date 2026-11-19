@@ -7,7 +7,7 @@ import { arrondis, couleurs, polices } from '@/constants/theme';
 type TextFieldProps = Omit<TextInputProps, 'style'> & {
   label: string;
   error?: string;
-  /** Affiche le bouton « œil » pour montrer / masquer le texte saisi. */
+  // Bouton « œil » pour afficher ou cacher le mot de passe
   showPasswordToggle?: boolean;
   ref?: Ref<TextInput>;
 };

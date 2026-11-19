@@ -1,23 +1,28 @@
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import type { BottomTabNavigationProp } from 'expo-router/tabs';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from 'expo-router';
-import type { BottomTabNavigationProp } from 'expo-router/tabs';
-import { useEffect, useState } from 'react';
 
-import { RAYON_ZONE_METRES } from '@/constants/coffres';
 import { ErrorBanner } from '@/components/auth/error-banner';
+import { BadgeHorsLigne } from '@/components/carte/BadgeHorsLigne';
 import { BadgePosition } from '@/components/carte/BadgePosition';
 import { CarteCoffres } from '@/components/carte/CarteCoffres';
+import { MessageDeverrouillage } from '@/components/carte/MessageDeverrouillage';
 import { FicheCoffre, type EtatZone } from '@/components/coffres/FicheCoffre';
+import { EcranChargement } from '@/components/EcranChargement';
+import { RAYON_ZONE_METRES } from '@/constants/coffres';
+import { OUVRIR_COFFRE_DANS_LA_ZONE } from '@/constants/notifications';
 import { arrondis, couleurs, espacements, polices, typographie } from '@/constants/theme';
 import { useAuth } from '@/hooks/use-auth';
+import { useChargementCarte } from '@/hooks/useChargementCarte';
 import { useCoffres } from '@/hooks/useCoffres';
+import { useDeverrouillage } from '@/hooks/useDeverrouillage';
+import { useHorsLigne } from '@/hooks/useHorsLigne';
 import { usePositionUtilisateur } from '@/hooks/usePositionUtilisateur';
 import type { Coffre, Coordonnees } from '@/types/coffre';
 import { estDansZone } from '@/utils/geo';
-import { MessageDeverrouillage } from '@/components/carte/MessageDeverrouillage';
-import { useDeverrouillage } from '@/hooks/useDeverrouillage';
 
 function calculerEtatZone(coffre: Coffre, position: Coordonnees | null): EtatZone {
     if (!position) return 'inconnu';
@@ -26,19 +31,46 @@ function calculerEtatZone(coffre: Coffre, position: Coordonnees | null): EtatZon
 
 export default function EcranCarte() {
     const { user } = useAuth();
-    const { statut, position } = usePositionUtilisateur();
+    const { statut, position, rafraichir } = usePositionUtilisateur();
+    const { chargee: carteChargee, surChargee } = useChargementCarte();
+    const horsLigne = useHorsLigne();
     // On prend l'id et pas l'objet pour afficher la version à jour venant de Firestore
     const [idCoffreSelectionne, setIdCoffreSelectionne] = useState<string | null>(null);
 
     const salutation = user?.displayName ? `Bonjour ${user.displayName}` : 'Bonjour';
     const { coffres, chargement, erreur } = useCoffres();
     const coffreSelectionne = coffres.find((coffre) => coffre.id === idCoffreSelectionne) ?? null;
-    const { deverrouiller, message, effacerMessage } = useDeverrouillage({ coffres, position, idCoffreSelectionne });
+    const { deverrouiller, deverrouillerCoffre, message, effacerMessage } = useDeverrouillage({
+        coffres,
+        position,
+        idCoffreSelectionne,
+    });
 
-    // Le bouton central « Déverrouiller » est l'onglet de cet écran : BarreOnglets émet « tabPress »
-    // à chaque appui, y compris quand on est déjà sur la carte.
     const navigation = useNavigation<BottomTabNavigationProp<Record<string, object | undefined>>>();
     useEffect(() => navigation.addListener('tabPress', deverrouiller), [navigation, deverrouiller]);
+
+    const { ouvrir } = useLocalSearchParams<{ ouvrir?: string }>();
+    const ouvertureLancee = useRef(false);
+
+    const ouvrirDepuisNotification = useCallback(
+        (idCoffre: string | null) => {
+            if (idCoffre) setIdCoffreSelectionne(idCoffre);
+            deverrouillerCoffre(idCoffre);
+        },
+        [deverrouillerCoffre],
+    );
+
+    useEffect(() => {
+        if (!ouvrir) {
+            ouvertureLancee.current = false;
+            return;
+        }
+        if (ouvertureLancee.current || chargement || statut === 'chargement') return;
+
+        ouvertureLancee.current = true;
+        router.setParams({ ouvrir: undefined });
+        ouvrirDepuisNotification(ouvrir === OUVRIR_COFFRE_DANS_LA_ZONE ? null : ouvrir);
+    }, [ouvrir, chargement, statut, ouvrirDepuisNotification]);
 
     return (
         <SafeAreaView edges={['top']} style={styles.ecran}>
@@ -47,22 +79,24 @@ export default function EcranCarte() {
                     <Text style={styles.surtitre}>{salutation.toUpperCase()}</Text>
                     <Text style={styles.titre}>Vos coffres</Text>
                 </View>
-                <BadgePosition statut={statut} />
+                <View style={styles.badges}>
+                    <BadgePosition statut={statut} onRafraichir={rafraichir} />
+                    {horsLigne && <BadgeHorsLigne />}
+                </View>
             </View>
 
             <View style={styles.cadreCarte}>
-                {chargement ? (
-                    <View style={styles.centre}>
-                        <ActivityIndicator size="large" color={couleurs.principale} />
-                    </View>
-                ) : (
+                {!chargement && (
                     <CarteCoffres
                         coffres={coffres}
                         positionUtilisateur={position}
                         idCoffreSelectionne={idCoffreSelectionne}
                         onSelectionCoffre={setIdCoffreSelectionne}
+                        onChargee={surChargee}
                     />
                 )}
+
+                {(chargement || !carteChargee) && <EcranChargement superposition />}
 
                 {(erreur || message) && (
                     <View style={styles.emplacementErreur}>
@@ -102,6 +136,7 @@ const styles = StyleSheet.create({
         paddingTop: espacements.md,
         paddingBottom: espacements.md,
     },
+    badges: { alignItems: 'flex-end', gap: espacements.xs },
     surtitre: { ...typographie.surtitre, color: couleurs.principaleFoncee },
     titre: { ...typographie.titre, color: couleurs.texte },
     cadreCarte: {
@@ -111,7 +146,6 @@ const styles = StyleSheet.create({
         borderRadius: arrondis.lg,
         overflow: 'hidden',
     },
-    centre: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     emplacementErreur: { position: 'absolute', top: espacements.sm, left: espacements.sm, right: 64 },
     vide: {
         gap: espacements.xs,

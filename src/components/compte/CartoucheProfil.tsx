@@ -10,7 +10,7 @@ type Props = {
     email: string | null;
 };
 
-/** Encadré sombre en haut de la page : avatar, nom d'utilisateur et e-mail. */
+// Bloc sombre en haut de la page : avatar, pseudo et e-mail
 export function CartoucheProfil({ nomUtilisateur, email }: Props) {
     const nom = nomUtilisateur ?? email?.split('@')[0] ?? 'Mon compte';
 

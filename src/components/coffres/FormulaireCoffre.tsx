@@ -4,12 +4,15 @@ import { useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { EcranChargement } from '@/components/EcranChargement';
 import { BoutonPositionActuelle } from '@/components/coffres/creation/BoutonPositionActuelle';
 import { CarteChoixLieu } from '@/components/coffres/creation/CarteChoixLieu';
 import { PanneauCoffre } from '@/components/coffres/creation/PanneauCoffre';
 import { RechercheAdresse } from '@/components/coffres/creation/RechercheAdresse';
 import { arrondis, couleurs, espacements } from '@/constants/theme';
+import { useChargementCarte } from '@/hooks/useChargementCarte';
 import { useFormulaireCoffre } from '@/hooks/useFormulaireCoffre';
+import { useNotifications } from '@/hooks/useNotifications';
 import { usePositionUtilisateur } from '@/hooks/usePositionUtilisateur';
 import { useRechercheAdresse } from '@/hooks/useRechercheAdresse';
 import type { SuggestionAdresse } from '@/services/geocodage';
@@ -23,8 +26,10 @@ type Props = {
 /** Écran plein format (carte + recherche + panneau) partagé par la création et la modification. */
 export function FormulaireCoffre({ coffre }: Props) {
     const marges = useSafeAreaInsets();
-    const { statut, position } = usePositionUtilisateur();
+    const { statut, position, rafraichir } = usePositionUtilisateur();
     const formulaire = useFormulaireCoffre(coffre);
+    const { notifierSiDansLaZone } = useNotifications();
+    const { chargee, surChargee } = useChargementCarte();
     const [texteRecherche, setTexteRecherche] = useState('');
     const recherche = useRechercheAdresse(texteRecherche, position);
 
@@ -41,7 +46,15 @@ export function FormulaireCoffre({ coffre }: Props) {
 
     async function valider() {
         Keyboard.dismiss();
+        const { lieu, nom } = formulaire;
         if (await formulaire.enregistrer()) {
+            // Coffre créé, ou déplacé, là où l'on se trouve : on prévient tout de suite qu'on peut l'ouvrir.
+            // Un simple changement de nom ne déclenche rien.
+            const aBouge =
+                !coffre ||
+                lieu?.coordonnees.latitude !== coffre.coordonnees.latitude ||
+                lieu?.coordonnees.longitude !== coffre.coordonnees.longitude;
+            if (lieu && aBouge) notifierSiDansLaZone(nom.trim(), lieu.coordonnees, position, coffre?.id);
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             router.back();
         }
@@ -50,7 +63,13 @@ export function FormulaireCoffre({ coffre }: Props) {
     return (
         <KeyboardAvoidingView behavior="padding" style={styles.ecran}>
             <View style={styles.zoneCarte}>
-                <CarteChoixLieu lieu={formulaire.lieu?.coordonnees ?? null} onChoisirCoordonnees={choisirCoordonnees} />
+                <CarteChoixLieu
+                    lieu={formulaire.lieu?.coordonnees ?? null}
+                    onChoisirCoordonnees={choisirCoordonnees}
+                    onChargee={surChargee}
+                />
+                {/* Sous la recherche et le bouton de position, qui restent utilisables pendant le chargement. */}
+                {!chargee && <EcranChargement superposition />}
 
                 <View style={[styles.haut, { top: marges.top + espacements.sm }]}>
                     <RechercheAdresse
@@ -65,7 +84,11 @@ export function FormulaireCoffre({ coffre }: Props) {
                 </View>
 
                 <View style={styles.bas}>
-                    <BoutonPositionActuelle statut={statut} onPress={() => position && choisirCoordonnees(position)} />
+                    <BoutonPositionActuelle
+                        statut={statut}
+                        onPress={() => position && choisirCoordonnees(position)}
+                        onReessayer={rafraichir}
+                    />
                 </View>
             </View>
 

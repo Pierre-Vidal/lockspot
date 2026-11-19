@@ -12,7 +12,7 @@ const INVALID_CREDENTIALS: AuthErrorInfo = {
   message: 'E-mail ou mot de passe incorrect',
 };
 
-/** Messages affichés à l'utilisateur, par code d'erreur Firebase Auth. */
+// Messages affichés à l'utilisateur selon le code d'erreur de Firebase Auth
 const MESSAGES: Record<string, AuthErrorInfo> = {
   // Connexion
   'auth/invalid-credential': INVALID_CREDENTIALS,
@@ -61,47 +61,8 @@ const MESSAGES: Record<string, AuthErrorInfo> = {
   'auth/timeout': NETWORK,
 };
 
-/**
- * Erreurs de configuration du projet Firebase : sans rapport avec l'utilisateur.
- * En développement on explique quoi corriger, en production on reste neutre.
- */
-const CONFIGURATION_HINTS: Record<string, string> = {
-  'auth/configuration-not-found':
-    'Firebase Authentication n’est pas initialisé. Console Firebase → Authentication → « Commencer ».',
-  'auth/operation-not-allowed':
-    'La connexion par e-mail n’est pas activée. Console Firebase → Authentication → Sign-in method → E-mail/Mot de passe.',
-  'auth/invalid-api-key':
-    'Clé API Firebase invalide. Vérifie EXPO_PUBLIC_FIREBASE_API_KEY dans .env.local, puis relance « npm run dev -- --clear ».',
-  'auth/api-key-not-valid.-please-pass-a-valid-api-key.':
-    'Clé API Firebase invalide. Vérifie EXPO_PUBLIC_FIREBASE_API_KEY dans .env.local, puis relance « npm run dev -- --clear ».',
-  'auth/app-not-authorized':
-    'Cette application n’est pas autorisée à utiliser cette clé API Firebase. Vérifie les restrictions de la clé dans Google Cloud.',
-  'auth/internal-error':
-    'Erreur interne Firebase : vérifie que l’API « Identity Toolkit » est activée et que la clé API n’est pas restreinte.',
-};
-
-const CONFIGURATION_FALLBACK =
-  'Le service de connexion est momentanément indisponible. Réessayez plus tard.';
-
-/** Traduit une erreur Firebase Auth en message français pour l'utilisateur. */
+// Traduit une erreur Firebase en message français, avec un message général si on ne la connaît pas
 export function describeAuthError(error: unknown): AuthErrorInfo {
   const code = error instanceof FirebaseError ? error.code : '';
-
-  const known = MESSAGES[code];
-  if (known) return known;
-
-  const hint = CONFIGURATION_HINTS[code];
-  if (hint) {
-    if (__DEV__) console.warn(`[Auth] ${code} — ${hint}`);
-    return { field: 'form', message: __DEV__ ? `${hint}` : CONFIGURATION_FALLBACK };
-  }
-
-  // Erreur inattendue : on garde le code visible pour que l'équipe puisse la diagnostiquer.
-  if (__DEV__) console.warn('[Auth] Erreur non gérée :', error);
-  return {
-    field: 'form',
-    message: code
-      ? `Une erreur est survenue (${code}). Réessayez.`
-      : 'Une erreur est survenue. Réessayez.',
-  };
+  return MESSAGES[code] ?? { field: 'form', message: 'Une erreur est survenue. Réessayez.' };
 }

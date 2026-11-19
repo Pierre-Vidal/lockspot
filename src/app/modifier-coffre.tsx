@@ -1,23 +1,18 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { EcranChargement } from '@/components/EcranChargement';
 import { FormulaireCoffre } from '@/components/coffres/FormulaireCoffre';
 import { couleurs, espacements, polices } from '@/constants/theme';
 import { useCoffres } from '@/hooks/useCoffres';
 
-/** Modifie le coffre dont l'identifiant est passé dans l'adresse : /modifier-coffre?id=… */
+// Modifie le coffre dont l'id est dans l'adresse (/modifier-coffre?id=…)
 export default function EcranModifierCoffre() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const { coffres, chargement } = useCoffres();
     const coffre = coffres.find((candidat) => candidat.id === id);
 
-    if (chargement) {
-        return (
-            <View style={styles.centre}>
-                <ActivityIndicator size="large" color={couleurs.principale} />
-            </View>
-        );
-    }
+    if (chargement) return <EcranChargement />;
 
     if (!coffre) {
         return (
@@ -31,7 +26,7 @@ export default function EcranModifierCoffre() {
         );
     }
 
-    // `key` : si on ouvre un autre coffre, le formulaire repart avec ses propres valeurs.
+    // La key remet le formulaire à zéro si on ouvre un autre coffre
     return <FormulaireCoffre key={coffre.id} coffre={coffre} />;
 }
 

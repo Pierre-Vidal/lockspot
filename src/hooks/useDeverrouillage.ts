@@ -22,7 +22,8 @@ export function useDeverrouillage({ coffres, position, idCoffreSelectionne }: Pa
         setMessage(texte);
     }
 
-    async function deverrouiller() {
+    /** Tente d'ouvrir le coffre `idCoffre`, ou celui dans la zone duquel on se trouve si `idCoffre` est `null`. */
+    async function tenterOuverture(idCoffre: string | null) {
         if (enCours) return;
         setMessage(null);
 
@@ -31,7 +32,7 @@ export function useDeverrouillage({ coffres, position, idCoffreSelectionne }: Pa
             return;
         }
 
-        const recherche = chercherCoffreAOuvrir(coffres, position, idCoffreSelectionne);
+        const recherche = chercherCoffreAOuvrir(coffres, position, idCoffre);
         if (recherche.type === 'selection-hors-zone') {
             refuser(
                 `Impossible d’ouvrir « ${recherche.coffre.nom} » : vous êtes hors de sa zone (à ${formaterDistance(recherche.distanceMetres)}).`,
@@ -65,5 +66,17 @@ export function useDeverrouillage({ coffres, position, idCoffreSelectionne }: Pa
         }
     }
 
-    return { deverrouiller, enCours, message, effacerMessage: () => setMessage(null) };
+    // Bouton « Déverrouiller » : il peut recevoir l'événement « tabPress », qu'on ignore volontairement.
+    function deverrouiller() {
+        return tenterOuverture(idCoffreSelectionne);
+    }
+
+    return {
+        deverrouiller,
+        /** Ouverture demandée pour un coffre précis, par exemple depuis une notification. */
+        deverrouillerCoffre: tenterOuverture,
+        enCours,
+        message,
+        effacerMessage: () => setMessage(null),
+    };
 }

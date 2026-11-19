@@ -7,6 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "lockspot",
     "userInterfaceStyle": "automatic",
+    "backgroundColor": "#eee6db",
     "runtimeVersion": {
       "policy": "appVersion"
     },
@@ -62,6 +63,7 @@
           "isAndroidForegroundServiceEnabled": true
         }
       ],
+      "expo-sharing",
       [
         "expo-image-picker",
         {

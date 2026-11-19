@@ -7,25 +7,26 @@ import type { StatutPosition } from '@/hooks/usePositionUtilisateur';
 const LIBELLES: Record<StatutPosition, string> = {
     chargement: 'Localisation…',
     active: 'Utiliser ma position actuelle',
-    refusee: 'Localisation refusée',
-    erreur: 'Position indisponible',
+    refusee: 'Autoriser la localisation',
+    erreur: 'Réessayer la localisation',
 };
 
 type Props = {
     statut: StatutPosition;
     onPress: () => void;
+    onReessayer: () => void;
 };
 
-export function BoutonPositionActuelle({ statut, onPress }: Props) {
+export function BoutonPositionActuelle({ statut, onPress, onReessayer }: Props) {
     const disponible = statut === 'active';
 
     return (
         <Pressable
-            onPress={onPress}
-            disabled={!disponible}
+            onPress={disponible ? onPress : onReessayer}
+            disabled={statut === 'chargement'}
             accessibilityRole="button"
             accessibilityLabel={LIBELLES[statut]}
-            accessibilityState={{ disabled: !disponible }}
+            accessibilityState={{ disabled: statut === 'chargement' }}
             style={({ pressed }) => [styles.bouton, pressed && styles.appuye, !disponible && styles.indisponible]}>
             {statut === 'chargement' ? (
                 <ActivityIndicator size="small" color={couleurs.texteDiscret} />

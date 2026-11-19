@@ -4,7 +4,6 @@ import { KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, View } f
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Logo from '@/assets/images/logo.svg';
-import { AuthBackground } from '@/components/auth/auth-background';
 import { LoginForm } from '@/components/auth/login-form';
 import { SignupForm } from '@/components/auth/signup-form';
 import { couleurs, polices } from '@/constants/theme';
@@ -16,7 +15,7 @@ const TABS: readonly { key: Tab; label: string }[] = [
   { key: 'signup', label: 'Créer un compte' },
 ];
 
-// Le logo fait 2537 x 564 : on garde ses proportions.
+// Taille du logo, on garde ses proportions
 const LOGO_WIDTH = 154;
 const LOGO_HEIGHT = (LOGO_WIDTH * 564) / 2537;
 
@@ -27,7 +26,6 @@ export default function LoginScreen() {
   return (
     <View style={styles.root}>
       <StatusBar style="dark" />
-      <AuthBackground />
       <KeyboardAvoidingView style={styles.flex} behavior="padding">
         <ScrollView
           contentContainerStyle={[

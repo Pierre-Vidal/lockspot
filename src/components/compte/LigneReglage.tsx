@@ -8,15 +8,15 @@ type Props = {
     icone: NomIcone;
     libelle: string;
     onPress: () => void;
-    /** Élément affiché à droite (interrupteur, chevron…). */
+    // Ce qui s'affiche à droite (interrupteur, flèche…)
     droite?: ReactNode;
-    /** Action risquée (déconnexion, suppression) : affichée en rouge. */
+    // Action sensible (déconnexion, suppression) : affichée en rouge
     danger?: boolean;
-    /** Trait de séparation sous la ligne (toutes sauf la dernière). */
+    // Trait de séparation sous la ligne, sauf pour la dernière
     separateur?: boolean;
 };
 
-/** Une ligne de la carte « Réglages ». */
+// Une ligne de la carte « Réglages »
 export function LigneReglage({ icone, libelle, onPress, droite, danger = false, separateur = true }: Props) {
     const couleur = danger ? couleurs.erreur : couleurs.texteSecondaire;
 

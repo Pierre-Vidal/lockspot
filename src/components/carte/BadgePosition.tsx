@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { Icone } from '@/components/Icone';
 import { arrondis, couleurs, espacements, typographie } from '@/constants/theme';
 import type { StatutPosition } from '@/hooks/usePositionUtilisateur';
 
@@ -10,14 +11,32 @@ const AFFICHAGE: Record<StatutPosition, { libelle: string; couleur: string }> = 
     erreur: { libelle: 'Position indisponible', couleur: couleurs.erreur },
 };
 
-export function BadgePosition({ statut }: { statut: StatutPosition }) {
+type Props = {
+    statut: StatutPosition;
+    onRafraichir: () => void;
+};
+
+export function BadgePosition({ statut, onRafraichir }: Props) {
     const { libelle, couleur } = AFFICHAGE[statut];
+    const enCours = statut === 'chargement';
 
     return (
-        <View style={styles.badge} accessibilityRole="text" accessibilityLabel={libelle}>
+        <Pressable
+            onPress={onRafraichir}
+            disabled={enCours}
+            accessibilityRole="button"
+            accessibilityLabel={`${libelle}. Actualiser la position`}
+            accessibilityState={{ busy: enCours }}
+            hitSlop={8}
+            style={({ pressed }) => [styles.badge, pressed && styles.appuye]}>
             <View style={[styles.pastille, { backgroundColor: couleur }]} />
             <Text style={styles.libelle}>{libelle}</Text>
-        </View>
+            {enCours ? (
+                <ActivityIndicator size="small" color={couleurs.texteSecondaire} style={styles.indicateur} />
+            ) : (
+                <Icone nom="actualiser" couleur={couleurs.texteSecondaire} taille={13} />
+            )}
+        </Pressable>
     );
 }
 
@@ -31,6 +50,8 @@ const styles = StyleSheet.create({
         borderRadius: arrondis.pilule,
         backgroundColor: couleurs.surface,
     },
+    appuye: { opacity: 0.7 },
     pastille: { width: 8, height: 8, borderRadius: 4 },
     libelle: { ...typographie.legende, color: couleurs.texte, fontWeight: '600' },
+    indicateur: { transform: [{ scale: 0.7 }] },
 });

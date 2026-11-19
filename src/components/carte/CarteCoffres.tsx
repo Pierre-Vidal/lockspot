@@ -15,6 +15,7 @@ type Props = {
     positionUtilisateur: Coordonnees | null;
     idCoffreSelectionne: string | null;
     onSelectionCoffre: (idCoffre: string | null) => void;
+    onChargee?: () => void;
 };
 
 const MARGE_CADRAGE = 48;
@@ -33,7 +34,7 @@ function versZonesGeoJSON(coffres: Coffre[]): GeoJSON.FeatureCollection<GeoJSON.
     };
 }
 
-export function CarteCoffres({ coffres, positionUtilisateur, idCoffreSelectionne, onSelectionCoffre }: Props) {
+export function CarteCoffres({ coffres, positionUtilisateur, idCoffreSelectionne, onSelectionCoffre, onChargee }: Props) {
     const camera = useRef<ComponentRef<typeof Camera>>(null);
     const zones = versZonesGeoJSON(coffres);
     const cadrage = emprise(coffres.flatMap((coffre) => contourCercle(coffre.coordonnees, RAYON_ZONE_METRES)));
@@ -62,6 +63,8 @@ export function CarteCoffres({ coffres, positionUtilisateur, idCoffreSelectionne
                 pitchEnabled={false}
                 logoPosition={{ bottom: 8, left: 8 }}
                 attributionPosition={{ bottom: 8, right: 8 }}
+                onDidFinishLoadingMap={onChargee}
+                onMapLoadingError={onChargee}
                 onPress={() => onSelectionCoffre(null)}>
                 <Camera
                     ref={camera}

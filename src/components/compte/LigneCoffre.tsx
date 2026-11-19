@@ -7,13 +7,13 @@ import type { Coffre } from '@/types/coffre';
 
 type Props = {
     coffre: Coffre;
-    /** `true` si l'utilisateur est dans la zone du coffre : l'épingle est alors en couleur. */
+    // true si on est dans la zone du coffre (l'épingle est alors en couleur)
     aProximite: boolean;
     onModifier: () => void;
     onSupprimer: () => void;
 };
 
-/** Une ligne de la liste « Mes coffres », avec ses boutons de modification et de suppression. */
+// Une ligne de « Mes coffres », avec les boutons modifier et supprimer
 export function LigneCoffre({ coffre, aProximite, onModifier, onSupprimer }: Props) {
     return (
         <View style={styles.ligne}>
