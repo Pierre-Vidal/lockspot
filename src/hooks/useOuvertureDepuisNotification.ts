@@ -4,11 +4,8 @@ import { useEffect } from 'react';
 
 import { OUVRIR_COFFRE_DANS_LA_ZONE } from '@/constants/notifications';
 
-/**
- * Quand l'utilisateur touche une de nos notifications (appli ouverte, en arrière-plan ou fermée),
- * on affiche la carte avec le paramètre `ouvrir` : l'écran de la carte tente alors d'ouvrir le coffre
- * (position, zone, biométrie), comme avec le bouton « Déverrouiller ».
- */
+// Quand on touche une de nos notifications, on va sur la carte avec le paramètre « ouvrir »
+// La carte tente alors d'ouvrir le coffre (position, zone, biométrie), comme le bouton « Déverrouiller »
 export function useOuvertureDepuisNotification(): void {
     const reponse = Notifications.useLastNotificationResponse();
     const etatNavigation = useRootNavigationState();
@@ -22,7 +19,7 @@ export function useOuvertureDepuisNotification(): void {
         if (donnees?.ouvrirCoffre !== true) return;
 
         const idCoffre = typeof donnees.coffreId === 'string' ? donnees.coffreId : OUVRIR_COFFRE_DANS_LA_ZONE;
-        // Pour ne pas rouvrir le coffre à chaque rendu, ni à la prochaine connexion.
+        // Pour ne pas rouvrir le coffre à chaque rendu, ni à la prochaine connexion
         Notifications.clearLastNotificationResponse();
         router.navigate({ pathname: '/', params: { ouvrir: idCoffre } });
     }, [reponse, navigationPrete]);

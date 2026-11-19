@@ -38,7 +38,6 @@ export function CarteChoixLieu({ lieu, onChoisirCoordonnees, onChargee }: Props)
                 if (longitude !== undefined && latitude !== undefined) onChoisirCoordonnees({ latitude, longitude });
             }}>
             <Camera
-                // Au départ : sur le coffre qu'on modifie, ou sur la France entière quand on en crée un
                 defaultSettings={
                     lieu
                         ? { centerCoordinate: versPositionMapbox(lieu), zoomLevel: ZOOM_LIEU }

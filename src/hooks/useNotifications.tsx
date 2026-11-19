@@ -19,17 +19,14 @@ import { ecrireNotificationsActives, lireNotificationsActives } from '@/services
 import type { Coordonnees } from '@/types/coffre';
 import { estDansZone } from '@/utils/geo';
 
-/** Résultat d'une demande d'activation, pour que l'écran puisse expliquer quoi faire. */
+// Résultat de la demande d'activation, pour que l'écran sache quoi dire
 export type ResultatActivation = 'ok' | 'notifications-refusees' | 'position-arriere-plan-refusee';
 
 type ValeurNotifications = {
-    /** Les alertes sont voulues par l'utilisateur ET autorisées par le téléphone. */
+    // Voulues par l'utilisateur ET autorisées par le téléphone
     actives: boolean;
     changer: (actives: boolean) => Promise<ResultatActivation>;
-    /**
-     * À appeler après avoir créé ou déplacé un coffre : si les alertes sont actives et que
-     * l'utilisateur se trouve dans la zone d'ouverture du coffre, une notification part tout de suite.
-     */
+    // À appeler après avoir créé ou déplacé un coffre : prévient tout de suite si on est dans sa zone
     notifierSiDansLaZone: (
         nomCoffre: string,
         coordonnees: Coordonnees,
@@ -40,11 +37,8 @@ type ValeurNotifications = {
 
 const ContexteNotifications = createContext<ValeurNotifications | null>(null);
 
-/**
- * Gère l'interrupteur « Notifications » et la surveillance des zones en arrière-plan.
- * La surveillance tourne seulement si l'utilisateur est connecté, a activé les alertes
- * et a accordé la position « tout le temps ».
- */
+// Gère l'interrupteur « Notifications » et la surveillance des zones
+// Elle tourne si l'utilisateur est connecté, a activé les alertes et a donné la position « tout le temps »
 export function NotificationsProvider({ children }: Readonly<{ children: ReactNode }>) {
     const { user } = useAuth();
     const { coffres, chargement: chargementCoffres } = useCoffres();
@@ -52,7 +46,7 @@ export function NotificationsProvider({ children }: Readonly<{ children: ReactNo
     const [permissionNotifications, setPermissionNotifications] = useState(false);
     const [permissionArrierePlan, setPermissionArrierePlan] = useState(false);
 
-    // Au démarrage, puis à chaque retour dans l'appli (ex. après être passé par les réglages du téléphone).
+    // Au démarrage et à chaque retour dans l'appli (ex. après les réglages du téléphone)
     useEffect(() => {
         let actif = true;
 
@@ -81,7 +75,7 @@ export function NotificationsProvider({ children }: Readonly<{ children: ReactNo
     const actives = souhaitees && permissionNotifications;
     const surveillance = Boolean(user) && actives && permissionArrierePlan;
 
-    // Garde les zones surveillées à jour : coffre créé, déplacé, renommé ou supprimé.
+    // Garde les zones à jour : coffre créé, déplacé, renommé ou supprimé
     useEffect(() => {
         if (!surveillance) {
             arreterGeoreperage().catch(() => {});
@@ -105,7 +99,7 @@ export function NotificationsProvider({ children }: Readonly<{ children: ReactNo
         await ecrireNotificationsActives(true);
         setSouhaitees(true);
 
-        // Sans la position « tout le temps », les alertes marchent seulement appli ouverte.
+        // Sans la position « tout le temps », les alertes marchent seulement appli ouverte
         const arrierePlan = await demanderPermissionArrierePlan();
         setPermissionArrierePlan(arrierePlan);
         return arrierePlan ? 'ok' : 'position-arriere-plan-refusee';

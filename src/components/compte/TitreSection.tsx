@@ -4,7 +4,7 @@ import { couleurs, polices } from '@/constants/theme';
 
 type Props = {
     titre: string;
-    /** Petite pastille avec un nombre à côté du titre (ex. nombre de coffres). */
+    // Petite pastille avec un nombre (ex. le nombre de coffres)
     nombre?: number;
 };
 

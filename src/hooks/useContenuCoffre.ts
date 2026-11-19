@@ -54,7 +54,6 @@ export function useContenuCoffre(idCoffre: string) {
         creerDossier: (nom: string, parentId: string | null) =>
             executer(() => stockage.creerDossier(idCoffre, nom, parentId)),
 
-        /** Ouvre le sélecteur du système ; rien n'est ajouté si l'utilisateur annule. */
         importerFichiers: (parentId: string | null) =>
             executer(async () => {
                 const sources = await choisirFichiers();
@@ -72,7 +71,6 @@ export function useContenuCoffre(idCoffre: string) {
 
         renommer: (idElement: string, nom: string) => executer(() => stockage.renommer(idCoffre, idElement, nom)),
 
-        /** Pour un dossier, supprime aussi tout ce qu'il contient. */
         supprimer: (idElement: string) => executer(() => stockage.supprimer(idCoffre, idElement)),
     };
 }

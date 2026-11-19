@@ -9,25 +9,20 @@ import type { FichierCoffre } from '@/types/contenu';
 
 const dossierOuvertures = () => new Directory(Paths.cache, 'ouvertures');
 
-// Action Android « afficher ce fichier » : le système propose « Ouvrir avec… » ou lance l'appli par défaut.
+// Action Android « afficher » : le système propose « Ouvrir avec… » ou lance l'appli par défaut
 const ACTION_AFFICHER = 'android.intent.action.VIEW';
-// Autorise l'appli choisie à lire le fichier, le temps de l'ouverture (Intent.FLAG_GRANT_READ_URI_PERMISSION).
+// Autorise l'appli choisie à lire le fichier le temps de l'ouverture
 const DROIT_DE_LECTURE = 1;
 const TYPE_INCONNU = 'application/octet-stream';
 
-/**
- * Ouvre un fichier du coffre dans une autre app (lecteur PDF, Drive…).
- * Il faut pour cela une copie déchiffrée : elle reste dans le cache de l'app
- * et disparaît à l'ouverture suivante ou quand le coffre se verrouille.
- *
- * Sur Android, on « ouvre » le fichier au lieu de le « partager » : expo-sharing n'affiche que le
- * menu Partager (envoyer par message, par mail…), pas la liste des applications qui savent le lire.
- */
+// Ouvre un fichier du coffre dans une autre app (lecteur PDF, Drive…)
+// Il faut une copie déchiffrée : elle reste dans le cache jusqu'à la prochaine ouverture ou au verrouillage
+// Sur Android on « ouvre » au lieu de « partager » : le partage ne propose pas les applis qui savent lire le fichier
 export async function ouvrirDansUneAutreApp(idCoffre: string, fichier: FichierCoffre) {
     effacerCopiesEnClair();
     const dossier = dossierOuvertures();
     dossier.create({ intermediates: true });
-    // Le vrai nom garde l'extension : l'autre app s'en sert pour reconnaître le type de fichier.
+    // Le vrai nom garde l'extension : l'autre app s'en sert pour reconnaître le type
     const copie = new File(dossier, fichier.nom.replace(/[\\/]/g, '_'));
     copie.create();
     copie.write(await lireEnOctets(idCoffre, fichier.id));
@@ -36,9 +31,9 @@ export async function ouvrirDansUneAutreApp(idCoffre: string, fichier: FichierCo
         try {
             await pendantAppExterne(() =>
                 IntentLauncher.startActivityAsync(ACTION_AFFICHER, {
-                    // Adresse sécurisée (FileProvider) : une adresse file:// serait refusée par Android.
+                    // Adresse sécurisée (FileProvider), Android refuse file://
                     data: copie.contentUri,
-                    // Sans type précis, Android le déduit de l'extension du nom.
+                    // Sans type précis, Android le devine avec l'extension
                     type: fichier.typeMime === TYPE_INCONNU ? undefined : fichier.typeMime,
                     flags: DROIT_DE_LECTURE,
                 }),
@@ -49,7 +44,7 @@ export async function ouvrirDansUneAutreApp(idCoffre: string, fichier: FichierCo
         return;
     }
 
-    // Autres plateformes : la feuille de partage du système propose aussi « Ouvrir dans… ».
+    // Ailleurs, la feuille de partage propose aussi « Ouvrir dans… »
     if (!(await Sharing.isAvailableAsync())) {
         throw new ErreurContenu('Aucune application ne peut ouvrir ce fichier sur ce téléphone.');
     }
@@ -58,14 +53,11 @@ export async function ouvrirDansUneAutreApp(idCoffre: string, fichier: FichierCo
     );
 }
 
-/**
- * On n'efface pas la copie dès le retour : certaines apps lisent encore le fichier après.
- */
 export function effacerCopiesEnClair() {
     try {
         const dossier = dossierOuvertures();
         if (dossier.exists) dossier.delete();
     } catch {
-        // Déjà supprimé par le système : rien à faire.
+        // Déjà supprimé par le système, rien à faire
     }
 }

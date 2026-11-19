@@ -1,8 +1,6 @@
-/** Champs communs à tout ce qu'on range dans un coffre. */
 type BaseElement = {
     id: string;
     nom: string;
-    /** Dossier qui contient l'élément, `null` à la racine du coffre. */
     parentId: string | null;
     creeLe: number;
     modifieLe: number;

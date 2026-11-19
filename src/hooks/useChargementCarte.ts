@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 
-/** Au-delà, on retire l'écran de chargement même si la carte n'a rien signalé (réseau absent, par exemple). */
+// Au-delà, on retire le logo même si la carte n'a rien signalé (ex. pas de réseau)
 const DELAI_MAX_MS = 8000;
 
-/**
- * Suit le chargement d'une carte Mapbox, pour afficher le logo tant qu'elle n'est pas dessinée.
- * `surChargee` se branche sur la carte ; le délai maximum évite de la cacher indéfiniment.
- */
+// Suit le chargement de la carte pour afficher le logo en attendant
+// Le délai maximum évite de cacher la carte indéfiniment
 export function useChargementCarte() {
     const [chargee, setChargee] = useState(false);
 

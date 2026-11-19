@@ -23,11 +23,14 @@ const COLLECTION_COFFRES = 'coffres';
 
 type DocumentCoffre = Omit<Coffre, 'id' | 'creeLe'> & { creeLe: Timestamp | null };
 
+// traduire un document firestore en Coffre
 function versCoffre(document: QueryDocumentSnapshot<DocumentData>): Coffre {
     // estimates car le coffre n'a pas encore sa date serveur
+    // document -> relatif au document en lui-même
     const donnees = document.data({ serverTimestamps: 'estimate' }) as DocumentCoffre;
     return {
         id: document.id,
+        // donnees -> relatif au contenu
         proprietaireId: donnees.proprietaireId,
         nom: donnees.nom,
         adresse: donnees.adresse,
@@ -44,17 +47,25 @@ export function ecouterCoffres(
     // filtre pour refuser une requête pouvant renvoyer les coffres d'un autre utilisateur
     const requete = query(collection(db, COLLECTION_COFFRES), where('proprietaireId', '==', proprietaireId));
 
+    // snapshot permet l'envoi de la liste puis le renvoi à chaque changement
+    // principe d'abonnement, on ne demande pas nous-même s'il y a un nouveau coffre
     return onSnapshot(
+        // ce que je veux
         requete,
+        // une fois la réponse obtenu, je lance ce code
         (resultat) => {
+            // création d'une nouvelle liste listant tous les objets Coffre depuis les documents reçus de firebase
             const coffres = resultat.docs.map(versCoffre).sort((a, b) => a.creeLe - b.creeLe);
+            // fonction callback -> utiliser par useCoffres qui l'affiche et la garde en cache
             surChangement(coffres);
         },
+        // si ça échoue
         surErreur,
     );
 }
 
 export async function creerCoffre(nouveauCoffre: NouveauCoffre, proprietaireId: string): Promise<void> {
+    // ajout fiche(où, quoi)
     await addDoc(collection(db, COLLECTION_COFFRES), {
         nom: nouveauCoffre.nom.trim(),
         adresse: nouveauCoffre.adresse,
@@ -75,7 +86,6 @@ export async function modifierCoffre(id: string, modifications: NouveauCoffre): 
 
 export async function supprimerCoffre(id: string): Promise<void> {
     await deleteDoc(doc(db, COLLECTION_COFFRES, id));
-    // Après Firestore seulement : si la suppression échoue, le coffre et son contenu restent intacts.
     supprimerToutLeContenu(id);
 }
 

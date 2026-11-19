@@ -5,11 +5,11 @@ import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, S
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ErrorBanner } from '@/components/auth/error-banner';
-import { Icone } from '@/components/Icone';
 import { CartoucheProfil } from '@/components/compte/CartoucheProfil';
 import { LigneCoffre } from '@/components/compte/LigneCoffre';
 import { LigneReglage } from '@/components/compte/LigneReglage';
 import { TitreSection } from '@/components/compte/TitreSection';
+import { Icone } from '@/components/Icone';
 import { RAYON_ZONE_METRES } from '@/constants/coffres';
 import { couleurs, espacements, polices } from '@/constants/theme';
 import { useAuth } from '@/hooks/use-auth';
@@ -27,11 +27,11 @@ export default function EcranCompte() {
     const { coffres, chargement, erreur } = useCoffres();
     const position = usePositionRecente();
     const { actives: notifications, changer: changerNotifications } = useNotifications();
-    // Évite un second appui pendant que le téléphone affiche ses fenêtres de permission.
+    // Évite un second appui pendant que le téléphone affiche ses fenêtres de permission
     const [changementEnCours, setChangementEnCours] = useState(false);
 
-    // Ouvre la page de Lockspot dans les réglages du téléphone (permissions, notifications, position).
-    // Android et iOS n'autorisent pas d'ouvrir directement la section biométrie du système.
+    // Ouvre la page de Lockspot dans les réglages du téléphone
+    // Android et iOS n'autorisent pas d'ouvrir directement la section biométrie du système
     function ouvrirReglagesTelephone() {
         Linking.openSettings().catch(() => {
             Alert.alert('Réglages indisponibles', 'Ouvrez les réglages du téléphone, puis l’application Lockspot.');
@@ -78,7 +78,7 @@ export default function EcranCompte() {
             {
                 text: 'Supprimer',
                 style: 'destructive',
-                // La liste se met à jour toute seule : Firestore prévient l'appli de la suppression.
+                // La liste se met à jour toute seule grâce à Firestore
                 onPress: () => {
                     supprimerCoffre(coffre.id).catch((erreurSuppression) => {
                         Alert.alert('Suppression impossible', describeAuthError(erreurSuppression).message);
@@ -104,7 +104,7 @@ export default function EcranCompte() {
                 style: 'destructive',
                 onPress: async () => {
                     try {
-                        // Les coffres d'abord : une fois le compte supprimé, il serait trop tard.
+                        // On supprime les coffres d'abord, après il sera trop tard
                         if (user) await supprimerTousLesCoffres(user.uid);
                         await deleteAccount();
                     } catch (erreur) {
@@ -113,6 +113,33 @@ export default function EcranCompte() {
                 },
             },
         ]);
+    }
+
+    // Trois cas : chargement, liste, ou aucun coffre
+    function contenuListeCoffres() {
+        if (chargement) {
+            return <ActivityIndicator color={couleurs.principale} style={styles.chargement} />;
+        }
+
+        if (coffres.length === 0) {
+            return (
+                <Text style={styles.aucunCoffre}>Aucun coffre pour le moment. Créez-en un depuis l’onglet « Nouveau coffre ».</Text>
+            );
+        }
+
+        return (
+            <View style={styles.listeCoffres}>
+                {coffres.map((coffre) => (
+                    <LigneCoffre
+                        key={coffre.id}
+                        coffre={coffre}
+                        aProximite={estAProximite(coffre)}
+                        onModifier={() => router.push({ pathname: '/modifier-coffre', params: { id: coffre.id } })}
+                        onSupprimer={() => confirmerSuppressionCoffre(coffre)}
+                    />
+                ))}
+            </View>
+        );
     }
 
     return (
@@ -137,23 +164,7 @@ export default function EcranCompte() {
 
                 <TitreSection titre="Mes coffres" nombre={chargement ? undefined : coffres.length} />
                 {erreur ? <ErrorBanner message={erreur} /> : null}
-                {chargement ? (
-                    <ActivityIndicator color={couleurs.principale} style={styles.chargement} />
-                ) : coffres.length > 0 ? (
-                    <View style={styles.listeCoffres}>
-                        {coffres.map((coffre) => (
-                            <LigneCoffre
-                                key={coffre.id}
-                                coffre={coffre}
-                                aProximite={estAProximite(coffre)}
-                                onModifier={() => router.push({ pathname: '/modifier-coffre', params: { id: coffre.id } })}
-                                onSupprimer={() => confirmerSuppressionCoffre(coffre)}
-                            />
-                        ))}
-                    </View>
-                ) : (
-                    <Text style={styles.aucunCoffre}>Aucun coffre pour le moment. Créez-en un depuis l’onglet « Nouveau coffre ».</Text>
-                )}
+                {contenuListeCoffres()}
 
                 <TitreSection titre="Réglages" />
                 <View style={styles.carteReglages}>

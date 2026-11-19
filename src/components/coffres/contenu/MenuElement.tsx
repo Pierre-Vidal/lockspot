@@ -15,13 +15,11 @@ const ACTIONS: { action: ActionElement; libelle: string; icone: NomIcone; teinte
 ];
 
 type Props = {
-    /** Élément sur lequel on a appuyé longuement, `null` quand le menu est fermé. */
     element: ElementCoffre | null;
     onChoisir: (action: ActionElement, element: ElementCoffre) => void;
     onFermer: () => void;
 };
 
-/** Actions sur un élément. Pas de Modal, pour la même raison que MenuAjout. */
 export function MenuElement({ element, onChoisir, onFermer }: Props) {
     const marges = useSafeAreaInsets();
 

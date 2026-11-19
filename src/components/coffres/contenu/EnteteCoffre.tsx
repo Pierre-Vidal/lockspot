@@ -8,17 +8,14 @@ import type { Dossier } from '@/types/contenu';
 
 type Props = {
     nomCoffre: string;
-    /** Dossiers ouverts, de la racine au dossier courant. */
     chemin: Dossier[];
     onRetour: () => void;
     onVerrouiller: () => void;
     onAllerA: (dossierId: string | null) => void;
 };
 
-/** En-tête sombre du coffre ouvert, avec le fil d'Ariane des dossiers. */
 export function EnteteCoffre({ nomCoffre, chemin, onRetour, onVerrouiller, onAllerA }: Props) {
     const marges = useSafeAreaInsets();
-    // Le fil commence par le coffre lui-même, qui ramène à la racine.
     const etapes = [{ id: null, nom: nomCoffre }, ...chemin.map(({ id, nom }) => ({ id, nom }))];
 
     return (
@@ -65,7 +62,6 @@ const styles = StyleSheet.create({
     entete: {
         gap: espacements.xs,
         paddingHorizontal: espacements.lg,
-        // Espace sous le fil d'Ariane, recouvert par les coins arrondis du panneau.
         paddingBottom: arrondis.lg + espacements.lg,
         backgroundColor: couleurs.enteteSombre,
         experimental_backgroundImage: `linear-gradient(200deg, ${couleurs.enteteLueur} 0%, ${couleurs.enteteSombre} 55%)`,

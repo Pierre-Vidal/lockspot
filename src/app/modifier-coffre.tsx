@@ -6,7 +6,7 @@ import { FormulaireCoffre } from '@/components/coffres/FormulaireCoffre';
 import { couleurs, espacements, polices } from '@/constants/theme';
 import { useCoffres } from '@/hooks/useCoffres';
 
-/** Modifie le coffre dont l'identifiant est passé dans l'adresse : /modifier-coffre?id=… */
+// Modifie le coffre dont l'id est dans l'adresse (/modifier-coffre?id=…)
 export default function EcranModifierCoffre() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const { coffres, chargement } = useCoffres();
@@ -26,7 +26,7 @@ export default function EcranModifierCoffre() {
         );
     }
 
-    // `key` : si on ouvre un autre coffre, le formulaire repart avec ses propres valeurs.
+    // La key remet le formulaire à zéro si on ouvre un autre coffre
     return <FormulaireCoffre key={coffre.id} coffre={coffre} />;
 }
 

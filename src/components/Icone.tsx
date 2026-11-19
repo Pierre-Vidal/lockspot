@@ -28,6 +28,7 @@ const SYMBOLES = {
     image: { ios: 'photo', android: 'image', web: 'image' },
     chevronBas: { ios: 'chevron.down', android: 'expand_more', web: 'expand_more' },
     crayon: { ios: 'pencil', android: 'edit', web: 'edit' },
+    horsLigne: { ios: 'wifi.slash', android: 'cloud_off', web: 'cloud_off' },
 } as const satisfies Record<string, SymbolViewProps['name']>;
 
 export type NomIcone = keyof typeof SYMBOLES;

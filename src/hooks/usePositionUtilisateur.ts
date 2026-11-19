@@ -35,7 +35,6 @@ export function usePositionUtilisateur(): EtatPosition & { rafraichir: () => voi
                 if (annule) return;
                 if (!granted) {
                     setEtat({ statut: 'refusee', position: null, precisionMetres: null });
-                    // Refus définitif : le système ne repose plus la question, seuls les réglages le peuvent.
                     if (tentative > 0 && !canAskAgain) Linking.openSettings();
                     return;
                 }
