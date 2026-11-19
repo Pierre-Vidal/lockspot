@@ -5,11 +5,6 @@ export type ResultatBiometrie = { ok: true } | { ok: false; message: string | nu
 const MESSAGE_SANS_VERROUILLAGE =
     'Activez Face ID, une empreinte ou un code sur votre téléphone pour pouvoir ouvrir vos coffres.';
 
-/**
- * Limite connue d'Android : après 5 empreintes ratées, Android ouvre sa propre page de code pour
- * débloquer l'empreinte et répond « annulé » à l'app, même si le code saisi est bon. L'app ne peut pas
- * distinguer ce cas d'une vraie annulation : le message guide l'utilisateur dans les deux cas.
- */
 const MESSAGE_ANNULATION =
     'Coffre non ouvert. Si votre empreinte est bloquée, débloquez-la avec le code du téléphone, puis touchez à nouveau « Déverrouiller ».';
 

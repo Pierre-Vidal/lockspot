@@ -10,15 +10,12 @@ import type { FichierCoffre } from '@/types/contenu';
 
 type Props = {
     idCoffre: string;
-    /** Image à afficher, `null` quand la visionneuse est fermée. */
     image: FichierCoffre | null;
     onFermer: () => void;
 };
 
-/** Affiche une image du coffre en plein écran. Elle est déchiffrée en mémoire, jamais écrite en clair. */
 export function VisionneuseImage({ idCoffre, image, onFermer }: Props) {
     const marges = useSafeAreaInsets();
-    // Le résultat garde l'id de son image : à l'ouverture d'une autre, l'ancienne n'est pas affichée.
     const [resultat, setResultat] = useState<{ idImage: string; source: string | null } | null>(null);
 
     useEffect(() => {
@@ -54,7 +51,6 @@ export function VisionneuseImage({ idCoffre, image, onFermer }: Props) {
                     {!charge ? (
                         <ActivityIndicator size="large" color={couleurs.texteSurSombre} />
                     ) : resultat.source ? (
-                        // cachePolicy « none » : sinon expo-image garderait une copie en clair dans son cache disque.
                         <Image source={{ uri: resultat.source }} style={styles.image} contentFit="contain" cachePolicy="none" />
                     ) : (
                         <Text style={styles.message}>Impossible d’ouvrir cette image.</Text>

@@ -15,7 +15,6 @@ type Props = {
     positionUtilisateur: Coordonnees | null;
     idCoffreSelectionne: string | null;
     onSelectionCoffre: (idCoffre: string | null) => void;
-    /** Appelé quand la carte est chargée (ou n'a pas pu l'être) : l'écran peut retirer son logo de chargement. */
     onChargee?: () => void;
 };
 

@@ -30,8 +30,6 @@ export default function EcranCoffreOuvert() {
     const marges = useSafeAreaInsets();
     const { coffres, chargement: chargementCoffres } = useCoffres();
     const coffre = coffres.find((candidat) => candidat.id === id);
-    // Figé au montage : l'écran n'existe que juste après une vérification réussie. Relu à chaque
-    // affichage, il déclencherait la redirection en plus du retour quand on verrouille.
     const [autorise] = useState(() => estOuvert(id));
 
     const contenu = useContenuCoffre(id);
@@ -242,7 +240,6 @@ const styles = StyleSheet.create({
     panneau: {
         flex: 1,
         gap: espacements.md,
-        // Le panneau remonte sur l'en-tête : ses coins arrondis se posent sur le dégradé.
         marginTop: -arrondis.lg,
         paddingTop: espacements.lg,
         paddingHorizontal: espacements.md,

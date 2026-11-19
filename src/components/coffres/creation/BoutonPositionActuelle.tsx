@@ -14,7 +14,6 @@ const LIBELLES: Record<StatutPosition, string> = {
 type Props = {
     statut: StatutPosition;
     onPress: () => void;
-    /** Appelé à la place de `onPress` quand la position n'a pas pu être obtenue. */
     onReessayer: () => void;
 };
 

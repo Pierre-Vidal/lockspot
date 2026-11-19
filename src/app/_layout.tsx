@@ -1,4 +1,3 @@
-// On importe chaque graisse séparément : un import groupé embarquerait toutes les graisses dans l'appli.
 import { DMSans_400Regular } from '@expo-google-fonts/dm-sans/400Regular';
 import { DMSans_500Medium } from '@expo-google-fonts/dm-sans/500Medium';
 import { DMSans_600SemiBold } from '@expo-google-fonts/dm-sans/600SemiBold';
@@ -16,12 +15,10 @@ import { couleurs } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
 import { NotificationsProvider } from '@/hooks/useNotifications';
 import { useOuvertureDepuisNotification } from '@/hooks/useOuvertureDepuisNotification';
-// Importé pour définir la tâche de surveillance des zones au chargement de l'appli (voir le fichier).
 import '@/services/georeperage';
 import { initialiserMapbox } from '@/services/mapbox';
 import { configurerNotifications } from '@/services/notifications';
 
-// Exécuté une seule fois, au chargement de l'app, avant le premier affichage.
 initialiserMapbox();
 configurerNotifications();
 
@@ -43,7 +40,6 @@ export default function LayoutRacine() {
         Manrope_800ExtraBold,
     });
 
-    // Le logo ne dépend pas des polices : on l'affiche tout de suite, sans écran vide.
     if (!policesChargees && !erreurPolices) return <EcranChargement onAffiche={masquerSplash} />;
 
     return (
@@ -56,16 +52,13 @@ export default function LayoutRacine() {
     );
 }
 
-/** Affiche l'appli si l'utilisateur est connecté, l'écran de connexion sinon. */
 function GardeConnexion() {
     const { user, loading } = useAuth();
 
-    // Une notification touchée sans être connecté ne doit pas ouvrir un coffre après la prochaine connexion.
     useEffect(() => {
         if (!loading && !user) Notifications.clearLastNotificationResponse();
     }, [loading, user]);
 
-    // Firebase restaure la session au démarrage : le logo reste affiché le temps de savoir si on est connecté.
     if (loading) return <EcranChargement onAffiche={masquerSplash} />;
 
     return (

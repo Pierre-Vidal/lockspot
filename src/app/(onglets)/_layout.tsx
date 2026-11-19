@@ -29,7 +29,6 @@ export default function LayoutOnglets() {
                     title: 'Nouveau coffre',
                     tabBarIcon: ({ color, size }) => <Icone nom="ajout" couleur={color} taille={size} />,
                 }}
-                // Ouverture en plein écran au lieu de changer d'onglet
                 listeners={{
                         tabPress: (evenement) => {
                         evenement.preventDefault();

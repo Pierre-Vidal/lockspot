@@ -5,7 +5,6 @@ import { PrimaryButton } from '@/components/auth/primary-button';
 import { TextField } from '@/components/auth/text-field';
 import { arrondis, couleurs, espacements, polices } from '@/constants/theme';
 
-/** Longueur maximale d'un nom de dossier ou de fichier dans un coffre. */
 const LONGUEUR_MAX = 60;
 
 type Props = {
@@ -17,7 +16,6 @@ type Props = {
     onFermer: () => void;
 };
 
-/** Demande un nom (nouveau dossier, renommage). Alert.prompt n'existe que sur iOS, d'où ce composant. */
 export function ModaleNom({ visible, titre, libelleBouton, valeurInitiale = '', onValider, onFermer }: Props) {
     const [nom, setNom] = useState(valeurInitiale);
     const [erreur, setErreur] = useState<string | undefined>();
@@ -37,7 +35,6 @@ export function ModaleNom({ visible, titre, libelleBouton, valeurInitiale = '', 
             transparent
             animationType="fade"
             onRequestClose={onFermer}
-            // Repart d'un champ propre à chaque ouverture.
             onShow={() => {
                 setNom(valeurInitiale);
                 setErreur(undefined);

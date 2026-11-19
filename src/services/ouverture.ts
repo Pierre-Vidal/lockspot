@@ -58,9 +58,6 @@ export async function ouvrirDansUneAutreApp(idCoffre: string, fichier: FichierCo
     );
 }
 
-/**
- * On n'efface pas la copie dès le retour : certaines apps lisent encore le fichier après.
- */
 export function effacerCopiesEnClair() {
     try {
         const dossier = dossierOuvertures();
