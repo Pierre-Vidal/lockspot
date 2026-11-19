@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { arrondis, couleurs, polices } from '@/constants/theme';
 
-/** Message d'erreur général d'un formulaire (réseau, configuration, erreur inattendue…). */
+// Erreur générale d'un formulaire (réseau, erreur inattendue…)
 export function ErrorBanner({ message }: Readonly<{ message: string }>) {
   return (
     <View style={styles.banner} accessibilityRole="alert" accessibilityLiveRegion="polite">

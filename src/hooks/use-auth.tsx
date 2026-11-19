@@ -4,9 +4,9 @@ import * as authService from '@/services/auth';
 import type { AppUser } from '@/types/auth';
 
 type AuthContextValue = {
-  /** Utilisateur connecté, ou `null` s'il ne l'est pas. */
+  // null si personne n'est connecté
   user: AppUser | null;
-  /** `true` tant que Firebase restaure la session au démarrage. */
+  // true pendant que Firebase retrouve la session
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (username: string, email: string, password: string) => Promise<void>;
@@ -20,8 +20,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
-  // Pendant l'inscription, on attend que le nom d'utilisateur soit enregistré
-  // avant de considérer l'utilisateur comme connecté.
+  // Pendant l'inscription, on attend que le pseudo soit enregistré
   const signingUp = useRef(false);
 
   useEffect(() => {

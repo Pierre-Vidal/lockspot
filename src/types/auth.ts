@@ -4,7 +4,7 @@ export type AppUser = {
   displayName: string | null;
 };
 
-/** Champ du formulaire auquel rattacher le message d'erreur (`form` = message général). */
+// Champ où afficher l'erreur, « form » pour un message général
 export type AuthErrorField = 'email' | 'password' | 'form';
 
 export type AuthErrorInfo = {

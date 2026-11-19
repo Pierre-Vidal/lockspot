@@ -15,16 +15,16 @@ import { couleurs } from '@/constants/theme';
 import { AuthProvider, useAuth } from '@/hooks/use-auth';
 import { NotificationsProvider } from '@/hooks/useNotifications';
 import { useOuvertureDepuisNotification } from '@/hooks/useOuvertureDepuisNotification';
+
 import '@/services/georeperage';
 import { initialiserMapbox } from '@/services/mapbox';
 import { configurerNotifications } from '@/services/notifications';
 
+// Exécuté une seule fois, au chargement de l'app
 initialiserMapbox();
 configurerNotifications();
 
-// Le splash natif reste affiché jusqu'à ce que l'écran de chargement (le même logo) soit à l'écran.
-// En build de développement, expo-dev-client le retire lui-même et affiche un écran blanc pendant le
-// téléchargement du code depuis Metro : ce blanc n'existe pas dans les builds preview et production.
+// Le splash natif reste affiché jusqu'à ce que l'écran de chargement (le même logo) soit à l'écran
 SplashScreen.preventAutoHideAsync();
 
 function masquerSplash() {

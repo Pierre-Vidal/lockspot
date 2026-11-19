@@ -17,12 +17,8 @@ type EvenementZone = {
     region: Location.LocationRegion;
 };
 
-/**
- * Exécutée par le système quand l'utilisateur entre dans l'une des zones surveillées.
- * Elle doit être définie ici, au niveau du module, et non dans un composant React.
- * Le nom du coffre vient de la liste enregistrée par `synchroniserZones` : la tâche
- * ne peut pas lire l'état de l'appli.
- */
+// Le système lance cette tâche quand on entre dans une zone
+// Hors composant, elle ne peut pas lire l'état de l'appli : on relit les noms enregistrés
 TaskManager.defineTask<EvenementZone>(TACHE_GEOREPERAGE, async ({ data, error }) => {
     if (error || !data || data.eventType !== Location.GeofencingEventType.Enter) return;
     if (!(await lireNotificationsActives())) return;
@@ -44,27 +40,25 @@ export async function permissionArrierePlanAccordee(): Promise<boolean> {
     return (await Location.getBackgroundPermissionsAsync()).granted;
 }
 
-/**
- * Demande la position « tout le temps », nécessaire pour être prévenu appli fermée.
- * Sur Android 11 et plus, le système renvoie l'utilisateur vers les réglages de l'appli.
- */
+// Demande la position « tout le temps » pour être prévenu en arrière-plan
+// Sur Android 11+, le système renvoie vers les réglages de l'appli
 export async function demanderPermissionArrierePlan(): Promise<boolean> {
     const premierPlan = await Location.requestForegroundPermissionsAsync();
     if (!premierPlan.granted) return false;
     return (await Location.requestBackgroundPermissionsAsync()).granted;
 }
 
-// Évite de réenregistrer les mêmes zones à chaque mise à jour de la liste de coffres.
+// Évite de réenregistrer les mêmes zones à chaque mise à jour
 let signatureEnregistree = '';
 
-/** Surveille une zone autour de chaque coffre. Sans la permission « tout le temps », ne fait rien. */
+// Surveille un cercle autour de chaque coffre (rien sans la permission « tout le temps »)
 export async function synchroniserZones(coffres: Coffre[]): Promise<void> {
     if (coffres.length === 0 || !(await permissionArrierePlanAccordee())) {
         await arreterGeoreperage();
         return;
     }
 
-    // Les noms peuvent changer sans que les zones bougent : on les met toujours à jour.
+    // Les noms peuvent changer sans que les zones bougent, donc on les met toujours à jour
     const zones: ZoneEnregistree[] = coffres.map(({ id, nom }) => ({ id, nom }));
     await AsyncStorage.setItem(CLE_ZONES, JSON.stringify(zones));
 
@@ -80,7 +74,7 @@ export async function synchroniserZones(coffres: Coffre[]): Promise<void> {
             identifier: id,
             latitude: coordonnees.latitude,
             longitude: coordonnees.longitude,
-            // Même rayon que la zone d'ouverture : on prévient seulement quand on peut ouvrir le coffre.
+            // Même rayon que l'ouverture : on prévient seulement quand on peut ouvrir le coffre
             radius: RAYON_ZONE_METRES,
             notifyOnEnter: true,
             notifyOnExit: false,

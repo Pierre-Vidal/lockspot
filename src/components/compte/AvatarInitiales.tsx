@@ -9,7 +9,7 @@ type Props = {
     initiales: string;
 };
 
-/** Pastille aux initiales, avec le point « en ligne » en bas à droite. */
+// Pastille avec les initiales et le petit point vert
 export function AvatarInitiales({ initiales }: Props) {
     return (
         <View style={styles.conteneur} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
